@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ynnovia — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f0f0f;
+    --bg2: #161616;
+    --bg3: #1e1e1e;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --text2: #8a8782;
+    --text3: #5a5855;
+    --accent: #c8f566;
+    --accent2: #a8d94a;
+    --blue: #4a9eff;
+    --orange: #ff8c42;
+    --red: #ff5252;
+    --green: #52ff8c;
+    --purple: #b38aff;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 220px;
+    height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    z-index: 100;
+  }
+
+  .logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo img { height: 28px; }
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .logo-badge {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--accent);
+    background: rgba(200,245,102,0.12);
+    border: 1px solid rgba(200,245,102,0.25);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .nav { padding: 16px 12px; flex: 1; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 400;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: rgba(200,245,102,0.1); color: var(--accent); }
+
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 220px;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-title { font-size: 16px; font-weight: 500; }
+  .header-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0f0f0f;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--accent2); }
+
+  /* CONTENT */
+  .content { padding: 28px 32px; }
+
+  /* STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.orange { color: var(--orange); }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--accent); color: #0f0f0f; border-color: var(--accent); }
+
+  .search-input {
+    margin-left: auto;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    width: 200px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-input:focus { border-color: var(--border2); }
+  .search-input::placeholder { color: var(--text3); }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    cursor: pointer;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg3); }
+
+  tbody td {
+    padding: 13px 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .td-muted { color: var(--text2); }
+  .td-mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    gap: 5px;
+  }
+
+  .badge-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .badge-attente {
+    background: rgba(255,140,66,0.12);
+    color: var(--orange);
+    border: 1px solid rgba(255,140,66,0.25);
+  }
+  .badge-attente .badge-dot { background: var(--orange); }
+
+  .badge-accepte {
+    background: rgba(200,245,102,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(200,245,102,0.2);
+  }
+  .badge-accepte .badge-dot { background: var(--accent); }
+
+  .badge-annule {
+    background: rgba(255,82,82,0.1);
+    color: var(--red);
+    border: 1px solid rgba(255,82,82,0.2);
+  }
+  .badge-annule .badge-dot { background: var(--red); }
+
+  .badge-type-devis {
+    background: rgba(74,158,255,0.1);
+    color: var(--blue);
+    border: 1px solid rgba(74,158,255,0.2);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-type-facture {
+    background: rgba(179,138,255,0.1);
+    color: var(--purple);
+    border: 1px solid rgba(179,138,255,0.2);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ACTIONS */
+  .action-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    margin-left: 4px;
+  }
+  .action-btn:hover { border-color: var(--border2); color: var(--text); }
+  .action-btn.danger:hover { border-color: rgba(255,82,82,0.4); color: var(--red); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    width: 480px;
+    max-width: 90vw;
+    padding: 28px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .field { margin-bottom: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field input:focus, .field select:focus { border-color: var(--border2); }
+  .field select option { background: var(--bg3); }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  /* LOADING */
+  .loading {
+    text-align: center;
+    padding: 60px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+
+  .spinner {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* EMPTY */
+  .empty {
+    text-align: center;
+    padding: 60px;
+    color: var(--text3);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 300;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: rgba(200,245,102,0.3); color: var(--accent); }
+  .toast.error { border-color: rgba(255,82,82,0.3); color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <span class="logo-text">Ynnovia</span>
+    <span class="logo-badge">Premium</span>
+  </div>
+  <nav class="nav">
+    <div class="nav-item active">
+      <span class="nav-icon">▦</span> Dashboard
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">◎</span> Devis
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">◈</span> Factures
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">◷</span> Historique
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    Connecté à Google Sheets<br>
+    <span id="last-sync" style="color: var(--text3);">Synchronisation...</span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="header">
+    <div>
+      <div class="header-title">Tableau de bord</div>
+      <div class="header-sub" id="header-date">Chargement...</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="loadData()">↻ Actualiser</button>
+      <button class="btn btn-primary" onclick="openModal('new')">+ Nouveau devis</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total devis/factures</div>
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-sub">documents</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Montant total HT</div>
+        <div class="stat-value accent" id="stat-montant">—</div>
+        <div class="stat-sub">euros</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En attente</div>
+        <div class="stat-value orange" id="stat-attente">—</div>
+        <div class="stat-sub">à relancer</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Taux d'acceptation</div>
+        <div class="stat-value blue" id="stat-taux">—</div>
+        <div class="stat-sub">devis acceptés</div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('tous', this)">Tous</button>
+      <button class="filter-btn" onclick="setFilter('En attente', this)">En attente</button>
+      <button class="filter-btn" onclick="setFilter('Accepté', this)">Accepté</button>
+      <button class="filter-btn" onclick="setFilter('devis', this)">Devis</button>
+      <button class="filter-btn" onclick="setFilter('facture', this)">Factures</button>
+      <input class="search-input" type="text" placeholder="Rechercher un client..." id="search-input" oninput="renderTable()">
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        Connexion à Google Sheets...
+      </div>
+      <table id="data-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Numéro</th>
+            <th>Client</th>
+            <th>Prestation</th>
+            <th>Montant HT</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none">
+        Aucun résultat trouvé
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Modifier le devis</div>
+    <div class="field">
+      <label>Client</label>
+      <input type="text" id="f-client" placeholder="Nom du client">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="f-email" placeholder="email@exemple.com">
+    </div>
+    <div class="field">
+      <label>Prestation</label>
+      <input type="text" id="f-prestation" placeholder="Description de la prestation">
+    </div>
+    <div class="field">
+      <label>Montant HT (€)</label>
+      <input type="number" id="f-montant" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Statut</label>
+      <select id="f-statut">
+        <option value="En Attente">En attente</option>
+        <option value="Accepté">Accepté</option>
+        <option value="Annulé">Annulé</option>
+      </select>
+    </div>
+    <input type="hidden" id="f-row">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').classList.remove('open')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_GET = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-get';
+const API_UPDATE = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-update';
+const API_CANCEL = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-cancel';
+
+let allData = [];
+let currentFilter = 'tous';
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+async function loadData() {
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('data-table').style.display = 'none';
+  document.getElementById('empty').style.display = 'none';
+
+  try {
+    const res = await fetch(API_GET);
+    const data = await res.json();
+    allData = Array.isArray(data) ? data : [data];
+
+    updateStats();
+    renderTable();
+
+    const now = new Date();
+    document.getElementById('last-sync').textContent = 'Sync ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('header-date').textContent = now.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  } catch(e) {
+    showToast('Erreur de connexion à n8n', 'error');
+    document.getElementById('loading').innerHTML = '<div style="color:var(--red)">Erreur de connexion. Vérifiez que le workflow est publié.</div>';
+  }
+}
+
+function updateStats() {
+  const total = allData.length;
+  const montant = allData.reduce((s, r) => s + (parseFloat(r['Montant HT']) || 0), 0);
+  const attente = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('attente')).length;
+  const accepte = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
+  const devisOnly = allData.filter(r => (r['Type '] || r['Type'] || '').toLowerCase() === 'devis');
+  const devisAccepte = devisOnly.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
+  const taux = devisOnly.length > 0 ? Math.round(devisAccepte / devisOnly.length * 100) : 0;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-montant').textContent = montant.toLocaleString('fr-FR') + ' €';
+  document.getElementById('stat-attente').textContent = attente;
+  document.getElementById('stat-taux').textContent = taux + '%';
+}
+
+function get(row, key) {
+  return row[key + ' '] || row[key] || '';
+}
+
+function renderTable() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+
+  let filtered = allData.filter(row => {
+    const statut = get(row, 'Statut').toLowerCase();
+    const type = get(row, 'Type').toLowerCase();
+    const client = get(row, 'Nom Client').toLowerCase();
+    const prestation = get(row, 'Prestation').toLowerCase();
+
+    const matchFilter = currentFilter === 'tous' ||
+      (currentFilter === 'En attente' && statut.includes('attente')) ||
+      (currentFilter === 'Accepté' && statut.includes('accept')) ||
+      (currentFilter === 'devis' && type === 'devis') ||
+      (currentFilter === 'facture' && type === 'facture');
+
+    const matchSearch = !search || client.includes(search) || prestation.includes(search);
+
+    return matchFilter && matchSearch;
+  });
+
+  document.getElementById('loading').style.display = 'none';
+
+  if (filtered.length === 0) {
+    document.getElementById('data-table').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('empty').style.display = 'none';
+  document.getElementById('data-table').style.display = 'table';
+
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = filtered.map(row => {
+    const statut = get(row, 'Statut');
+    const type = get(row, 'Type');
+    const client = get(row, 'Nom Client');
+    const email = get(row, 'Email Client');
+    const prestation = get(row, 'Prestation');
+    const montant = parseFloat(get(row, 'Montant HT')) || 0;
+    const date = get(row, 'Date');
+    const numero = get(row, 'Numéro') || '—';
+    const rowNum = row['row_number'];
+
+    const statutLower = statut.toLowerCase();
+    let badgeClass = 'badge-attente';
+    let badgeLabel = 'En attente';
+    if (statutLower.includes('accept')) { badgeClass = 'badge-accepte'; badgeLabel = 'Accepté'; }
+    else if (statutLower.includes('annul')) { badgeClass = 'badge-annule'; badgeLabel = 'Annulé'; }
+
+    const typeClass = type.toLowerCase() === 'facture' ? 'badge-type-facture' : 'badge-type-devis';
+
+    return `<tr onclick="openEdit(${rowNum})">
+      <td><span class="${typeClass}">${type}</span></td>
+      <td class="td-mono td-muted">${numero}</td>
+      <td>
+        <div style="font-weight:500">${client}</div>
+        <div style="font-size:11px;color:var(--text3)">${email}</div>
+      </td>
+      <td class="td-muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${prestation}</td>
+      <td style="font-family:'DM Mono',monospace;font-weight:500">${montant.toLocaleString('fr-FR')} €</td>
+      <td class="td-muted">${date}</td>
+      <td><span class="badge ${badgeClass}"><span class="badge-dot"></span>${badgeLabel}</span></td>
+      <td onclick="event.stopPropagation()">
+        <button class="action-btn" onclick="openEdit(${rowNum})">Modifier</button>
+        <button class="action-btn danger" onclick="cancelRow(${rowNum}, '${client}')">Annuler</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function openEdit(rowNum) {
+  const row = allData.find(r => r.row_number === rowNum);
+  if (!row) return;
+
+  document.getElementById('modal-title').textContent = 'Modifier — ' + get(row, 'Nom Client');
+  document.getElementById('f-client').value = get(row, 'Nom Client');
+  document.getElementById('f-email').value = get(row, 'Email Client');
+  document.getElementById('f-prestation').value = get(row, 'Prestation');
+  document.getElementById('f-montant').value = get(row, 'Montant HT');
+  document.getElementById('f-statut').value = get(row, 'Statut') || 'En Attente';
+  document.getElementById('f-row').value = rowNum;
+  document.getElementById('modal').classList.add('open');
+}
+
+function openModal(type) {
+  document.getElementById('modal-title').textContent = 'Nouveau document';
+  document.getElementById('f-client').value = '';
+  document.getElementById('f-email').value = '';
+  document.getElementById('f-prestation').value = '';
+  document.getElementById('f-montant').value = '';
+  document.getElementById('f-statut').value = 'En Attente';
+  document.getElementById('f-row').value = '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+
+async function saveEdit() {
+  const rowNum = document.getElementById('f-row').value;
+  const payload = {
+    row_number: parseInt(rowNum),
+    'Nom Client': document.getElementById('f-client').value,
+    'Email Client': document.getElementById('f-email').value,
+    'Prestation': document.getElementById('f-prestation').value,
+    'Montant HT': parseFloat(document.getElementById('f-montant').value),
+    'Statut': document.getElementById('f-statut').value,
+  };
+
+  try {
+    await fetch(API_UPDATE, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    document.getElementById('modal').classList.remove('open');
+    showToast('Modifications enregistrées', 'success');
+    await loadData();
+  } catch(e) {
+    showToast('Erreur lors de la sauvegarde', 'error');
+  }
+}
+
+async function cancelRow(rowNum, client) {
+  if (!confirm(`Annuler le document de ${client} ?`)) return;
+  try {
+    await fetch(API_CANCEL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ row_number: rowNum, Statut: 'Annulé' })
+    });
+    showToast('Document annulé', 'success');
+    await loadData();
+  } catch(e) {
+    showToast('Erreur lors de l\'annulation', 'error');
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
