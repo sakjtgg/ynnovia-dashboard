@@ -328,6 +328,13 @@
   }
   .badge-signe .badge-dot { background: var(--purple); }
 
+  .badge-paye {
+    background: rgba(82,255,140,0.1);
+    color: var(--green);
+    border: 1px solid rgba(82,255,140,0.2);
+  }
+  .badge-paye .badge-dot { background: var(--green); }
+
   .badge-type-devis {
     background: rgba(74,158,255,0.1);
     color: var(--blue);
@@ -946,7 +953,8 @@ function renderTable() {
     const statutLower = statut.toLowerCase();
     let badgeClass = 'badge-attente';
     let badgeLabel = 'En attente';
-    if (statutLower.includes('accept')) { badgeClass = 'badge-accepte'; badgeLabel = 'Accepté'; }
+    if (statutLower.includes('pay')) { badgeClass = 'badge-paye'; badgeLabel = 'Payé'; }
+    else if (statutLower.includes('accept')) { badgeClass = 'badge-accepte'; badgeLabel = 'Accepté'; }
     else if (statutLower.includes('sign')) { badgeClass = 'badge-signe'; badgeLabel = 'Signé'; }
     else if (statutLower.includes('attente signature')) { badgeClass = 'badge-attente'; badgeLabel = 'En attente signature'; }
     else if (statutLower.includes('annul')) { badgeClass = 'badge-annule'; badgeLabel = 'Annulé'; }
@@ -968,6 +976,7 @@ function renderTable() {
         <button class="action-btn" onclick="openEdit(${rowNum})">Modifier</button>
         <button class="action-btn" onclick="sendSignature(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--accent);border-color:rgba(200,245,102,0.3)">Signer</button>
         <button class="action-btn" onclick="sendPayment(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--blue);border-color:rgba(74,158,255,0.3)">💳 Payer</button>
+        <button class="action-btn" onclick="markPaid(${rowNum}, '${client}')" style="color:var(--green);border-color:rgba(82,255,140,0.3)">✓ Payé</button>
         <button class="action-btn danger" onclick="cancelRow(${rowNum}, '${client}')">Annuler</button>
       </td>
     </tr>`;
@@ -1097,6 +1106,21 @@ async function cancelRow(rowNum, client) {
     await loadData();
   } catch(e) {
     showToast('Erreur lors de l\'annulation', 'error');
+  }
+}
+
+async function markPaid(rowNum, client) {
+  if (!confirm(`Marquer le document de ${client} comme payé ?`)) return;
+  try {
+    await fetch(API_UPDATE, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ row_number: rowNum, Statut: 'Payé' })
+    });
+    showToast('Marqué comme payé ✓', 'success');
+    await loadData();
+  } catch(e) {
+    showToast('Erreur', 'error');
   }
 }
 
