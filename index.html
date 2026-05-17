@@ -621,7 +621,7 @@
     </div>
 
     <!-- GRAPHIQUE CA PAR MOIS -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;min-height:200px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div>
           <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;font-weight:500">Chiffre d'affaires</div>
@@ -629,7 +629,9 @@
         </div>
         <div id="chart-total" style="font-size:13px;color:var(--text3)"></div>
       </div>
-      <canvas id="ca-chart" height="80"></canvas>
+      <div style="position:relative;height:180px">
+        <canvas id="ca-chart"></canvas>
+      </div>
     </div>
 
     <!-- TELEGRAM TIP -->
@@ -766,6 +768,7 @@ function renderChart(data) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         tooltip: {
