@@ -837,6 +837,7 @@ const API_GET = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-get';
 const API_UPDATE = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-update';
 const API_CANCEL = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-cancel';
 const API_CREATE = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-create';
+const API_SIGNATURE = 'https://n8n.srv1464223.hstgr.cloud/webhook/send-signature';
 
 let allData = [];
 let currentFilter = 'tous';
@@ -955,6 +956,7 @@ function renderTable() {
       <td><span class="badge ${badgeClass}"><span class="badge-dot"></span>${badgeLabel}</span></td>
       <td onclick="event.stopPropagation()">
         <button class="action-btn" onclick="openEdit(${rowNum})">Modifier</button>
+        <button class="action-btn" onclick="sendSignature(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--accent);border-color:rgba(200,245,102,0.3)">Signer</button>
         <button class="action-btn danger" onclick="cancelRow(${rowNum}, '${client}')">Annuler</button>
       </td>
     </tr>`;
@@ -1084,6 +1086,28 @@ async function cancelRow(rowNum, client) {
     await loadData();
   } catch(e) {
     showToast('Erreur lors de l\'annulation', 'error');
+  }
+}
+
+async function sendSignature(rowNum, client, email, prestation, montant, numero) {
+  if (!confirm(`Envoyer le devis de ${client} pour signature ?`)) return;
+  try {
+    await fetch(API_SIGNATURE, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        row_number: rowNum,
+        'Nom Client': client,
+        'Email Client': email,
+        'Prestation': prestation,
+        'Montant HT': montant,
+        'Numéro': numero,
+      })
+    });
+    showToast('Email de signature envoyé à ' + client + ' ✓', 'success');
+    await loadData();
+  } catch(e) {
+    showToast('Erreur lors de l\'envoi', 'error');
   }
 }
 
