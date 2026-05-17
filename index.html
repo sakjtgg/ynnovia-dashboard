@@ -972,12 +972,12 @@ function renderTable() {
       <td style="font-family:'DM Mono',monospace;font-weight:500">${montant.toLocaleString('fr-FR')} €</td>
       <td class="td-muted">${date}</td>
       <td><span class="badge ${badgeClass}"><span class="badge-dot"></span>${badgeLabel}</span></td>
-      <td onclick="event.stopPropagation()">
-        <button class="action-btn" onclick="openEdit(${rowNum})">Modifier</button>
-        <button class="action-btn" onclick="sendSignature(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--accent);border-color:rgba(200,245,102,0.3)">Signer</button>
-        <button class="action-btn" onclick="sendPayment(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--blue);border-color:rgba(74,158,255,0.3)">💳 Payer</button>
-        <button class="action-btn" onclick="markPaid(${rowNum}, '${client}')" style="color:var(--green);border-color:rgba(82,255,140,0.3)">✓ Payé</button>
-        <button class="action-btn danger" onclick="cancelRow(${rowNum}, '${client}')">Annuler</button>
+      <td onclick="event.stopPropagation()" style="white-space:nowrap">
+        <button class="action-btn" onclick="openEdit(${rowNum})">✏️</button>
+        <button class="action-btn" onclick="sendSignature(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--accent);border-color:rgba(200,245,102,0.3)" title="Envoyer pour signature">✍️</button>
+        <button class="action-btn" onclick="sendPayment(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--blue);border-color:rgba(74,158,255,0.3)" title="Envoyer lien paiement">💳</button>
+        <button class="action-btn" onclick="markPaid(${rowNum}, '${client}')" style="color:var(--green);border-color:rgba(82,255,140,0.3)" title="Marquer comme payé">✓</button>
+        <button class="action-btn danger" onclick="cancelRow(${rowNum}, '${client}')" title="Annuler">✕</button>
       </td>
     </tr>`;
   }).join('');
@@ -1111,11 +1111,20 @@ async function cancelRow(rowNum, client) {
 
 async function markPaid(rowNum, client) {
   if (!confirm(`Marquer le document de ${client} comme payé ?`)) return;
+  const row = allData.find(r => r.row_number === rowNum);
+  if (!row) return;
   try {
     await fetch(API_UPDATE, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ row_number: rowNum, Statut: 'Payé' })
+      body: JSON.stringify({
+        row_number: rowNum,
+        'Nom Client': get(row, 'Nom Client'),
+        'Email Client': get(row, 'Email Client'),
+        'Prestation': get(row, 'Prestation'),
+        'Montant HT': get(row, 'Montant HT'),
+        'Statut': 'Payé'
+      })
     });
     showToast('Marqué comme payé ✓', 'success');
     await loadData();
