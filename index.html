@@ -620,6 +620,18 @@
       </div>
     </div>
 
+    <!-- GRAPHIQUE CA PAR MOIS -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;font-weight:500">Chiffre d'affaires</div>
+          <div style="font-size:14px;font-weight:500;margin-top:2px">par mois</div>
+        </div>
+        <div id="chart-total" style="font-size:13px;color:var(--text3)"></div>
+      </div>
+      <canvas id="ca-chart" height="80"></canvas>
+    </div>
+
     <!-- TELEGRAM TIP -->
     <div class="telegram-tip">
       ✦ Pour créer un devis ou une facture avec PDF, utilisez le bot Telegram
@@ -709,7 +721,84 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
+let caChart = null;
+
+function renderChart(data) {
+  const months = {};
+  const moisNoms = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];
+
+  data.forEach(row => {
+    const dateStr = row['Date '] || row['Date'] || '';
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return;
+    const mois = parseInt(parts[1]) - 1;
+    const annee = parts[2];
+    const key = `${annee}-${String(mois+1).padStart(2,'0')}`;
+    const label = `${moisNoms[mois]} ${annee}`;
+    if (!months[key]) months[key] = { label, total: 0 };
+    months[key].total += parseFloat(row['Montant HT']) || 0;
+  });
+
+  const sorted = Object.keys(months).sort();
+  const labels = sorted.map(k => months[k].label);
+  const values = sorted.map(k => Math.round(months[k].total));
+
+  const total = values.reduce((a, b) => a + b, 0);
+  document.getElementById('chart-total').textContent = total.toLocaleString('fr-FR') + ' € total';
+
+  const ctx = document.getElementById('ca-chart').getContext('2d');
+  if (caChart) caChart.destroy();
+
+  caChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: 'rgba(200,245,102,0.15)',
+        borderColor: '#c8f566',
+        borderWidth: 2,
+        borderRadius: 6,
+        hoverBackgroundColor: 'rgba(200,245,102,0.3)',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ctx.parsed.y.toLocaleString('fr-FR') + ' €'
+          },
+          backgroundColor: '#161616',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          titleColor: '#f0ede8',
+          bodyColor: '#c8f566',
+          padding: 10,
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#5a5855', font: { size: 11 } },
+          border: { color: 'rgba(255,255,255,0.06)' }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: {
+            color: '#5a5855',
+            font: { size: 11 },
+            callback: v => v.toLocaleString('fr-FR') + ' €'
+          },
+          border: { color: 'rgba(255,255,255,0.06)' }
+        }
+      }
+    }
+  });
+}
 const PASSWORD = 'ynnovia2026';
 
 function checkLogin() {
@@ -767,6 +856,7 @@ async function loadData() {
     allData = Array.isArray(data) ? data : [data];
 
     updateStats();
+    renderChart(allData);
     renderTable();
 
     const now = new Date();
