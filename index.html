@@ -570,10 +570,17 @@
   </div>
 </div>
 
-<!-- MODAL EDIT -->
+<!-- MODAL EDIT / CREATE -->
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
   <div class="modal">
-    <div class="modal-title" id="modal-title">Modifier le devis</div>
+    <div class="modal-title" id="modal-title">Nouveau document</div>
+    <div class="field" id="field-type">
+      <label>Type</label>
+      <select id="f-type">
+        <option value="devis">Devis</option>
+        <option value="facture">Facture</option>
+      </select>
+    </div>
     <div class="field">
       <label>Client</label>
       <input type="text" id="f-client" placeholder="Nom du client">
@@ -590,7 +597,7 @@
       <label>Montant HT (€)</label>
       <input type="number" id="f-montant" placeholder="0">
     </div>
-    <div class="field">
+    <div class="field" id="field-statut">
       <label>Statut</label>
       <select id="f-statut">
         <option value="En Attente">En attente</option>
@@ -599,9 +606,10 @@
       </select>
     </div>
     <input type="hidden" id="f-row">
+    <input type="hidden" id="f-mode" value="edit">
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="document.getElementById('modal').classList.remove('open')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveEdit()">Enregistrer</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveForm()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -612,6 +620,7 @@
 const API_GET = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-get';
 const API_UPDATE = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-update';
 const API_CANCEL = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-cancel';
+const API_CREATE = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-create';
 
 let allData = [];
 let currentFilter = 'tous';
@@ -747,24 +756,71 @@ function openEdit(rowNum) {
   if (!row) return;
 
   document.getElementById('modal-title').textContent = 'Modifier — ' + get(row, 'Nom Client');
+  document.getElementById('f-type').value = get(row, 'Type') || 'devis';
   document.getElementById('f-client').value = get(row, 'Nom Client');
   document.getElementById('f-email').value = get(row, 'Email Client');
   document.getElementById('f-prestation').value = get(row, 'Prestation');
   document.getElementById('f-montant').value = get(row, 'Montant HT');
   document.getElementById('f-statut').value = get(row, 'Statut') || 'En Attente';
   document.getElementById('f-row').value = rowNum;
+  document.getElementById('f-mode').value = 'edit';
+  document.getElementById('field-type').style.display = 'none';
+  document.getElementById('field-statut').style.display = 'block';
+  document.getElementById('modal-save-btn').textContent = 'Enregistrer';
   document.getElementById('modal').classList.add('open');
 }
 
-function openModal(type) {
+function openModal() {
   document.getElementById('modal-title').textContent = 'Nouveau document';
+  document.getElementById('f-type').value = 'devis';
   document.getElementById('f-client').value = '';
   document.getElementById('f-email').value = '';
   document.getElementById('f-prestation').value = '';
   document.getElementById('f-montant').value = '';
   document.getElementById('f-statut').value = 'En Attente';
   document.getElementById('f-row').value = '';
+  document.getElementById('f-mode').value = 'create';
+  document.getElementById('field-type').style.display = 'block';
+  document.getElementById('field-statut').style.display = 'none';
+  document.getElementById('modal-save-btn').textContent = 'Créer';
   document.getElementById('modal').classList.add('open');
+}
+
+async function saveForm() {
+  const mode = document.getElementById('f-mode').value;
+  if (mode === 'create') {
+    await createDoc();
+  } else {
+    await saveEdit();
+  }
+}
+
+async function createDoc() {
+  const payload = {
+    'Type': document.getElementById('f-type').value,
+    'Nom Client': document.getElementById('f-client').value,
+    'Email Client': document.getElementById('f-email').value,
+    'Prestation': document.getElementById('f-prestation').value,
+    'Montant HT': parseFloat(document.getElementById('f-montant').value) || 0,
+  };
+
+  if (!payload['Nom Client'] || !payload['Prestation'] || !payload['Montant HT']) {
+    showToast('Remplis tous les champs obligatoires', 'error');
+    return;
+  }
+
+  try {
+    await fetch(API_CREATE, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    document.getElementById('modal').classList.remove('open');
+    showToast(payload['Type'] === 'facture' ? 'Facture créée ✓' : 'Devis créé ✓', 'success');
+    await loadData();
+  } catch(e) {
+    showToast('Erreur lors de la création', 'error');
+  }
 }
 
 function closeModal(e) {
@@ -775,6 +831,7 @@ function closeModal(e) {
 
 async function saveEdit() {
   const rowNum = document.getElementById('f-row').value;
+  if (!rowNum) return;
   const payload = {
     row_number: parseInt(rowNum),
     'Nom Client': document.getElementById('f-client').value,
