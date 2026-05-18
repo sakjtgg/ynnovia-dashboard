@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ynnovia — Paiement confirmé</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, 'DM Sans', sans-serif;
+    background: #0f0f0f;
+    color: #f0ede8;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .container {
+    text-align: center;
+    max-width: 480px;
+    width: 100%;
+  }
+
+  .icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(200,245,102,0.1);
+    border: 2px solid rgba(200,245,102,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    font-size: 36px;
+    animation: pop 0.4s ease;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .logo {
+    font-size: 14px;
+    color: #5a5855;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    color: #c8f566;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: #8a8782;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: #161616;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .card-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .card-row:last-child { border-bottom: none; }
+  .card-label { color: #5a5855; }
+  .card-value { font-weight: 500; color: #f0ede8; }
+
+  .footer {
+    font-size: 12px;
+    color: #5a5855;
+    line-height: 1.8;
+  }
+
+  .footer a {
+    color: #8a8782;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">Ynnovia</div>
+  <div class="icon">✓</div>
+  <div class="title">Paiement confirmé !</div>
+  <div class="subtitle">
+    Votre paiement a bien été reçu.<br>
+    Vous recevrez une confirmation par email.
+  </div>
+
+  <div class="card">
+    <div class="card-row">
+      <span class="card-label">Statut</span>
+      <span class="card-value" style="color:#c8f566">✓ Payé</span>
+    </div>
+    <div class="card-row">
+      <span class="card-label">Prestataire</span>
+      <span class="card-value">Ynnovia</span>
+    </div>
+    <div class="card-row">
+      <span class="card-label">Contact</span>
+      <span class="card-value">Sak.e.agency@gmail.com</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    Merci pour votre confiance.<br>
+    Pour toute question, contactez-nous à<br>
+    <a href="mailto:Sak.e.agency@gmail.com">Sak.e.agency@gmail.com</a>
+  </div>
+</div>
+</body>
+</html>
