@@ -558,6 +558,77 @@
     margin-bottom: 20px;
     text-align: center;
   }
+
+  /* MOBILE RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0 !important; }
+
+    .header { padding: 14px 16px; }
+    .header-title { font-size: 14px; }
+    .header-sub { display: none; }
+    .btn { padding: 6px 10px; font-size: 12px; }
+
+    .content { padding: 12px; }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card { padding: 12px; }
+    .stat-value { font-size: 20px; }
+    .stat-label { font-size: 10px; }
+
+    /* Cache graphique sur mobile */
+    .content > div:nth-child(2) { display: none; }
+
+    .filters { flex-wrap: wrap; gap: 6px; }
+    .filter-btn { font-size: 11px; padding: 5px 10px; }
+    .search-input { width: 100%; margin-left: 0; margin-top: 4px; }
+
+    /* Tableau en cards sur mobile */
+    .table-wrap { border-radius: 10px; overflow: hidden; }
+    table { display: block; }
+    thead { display: none; }
+    tbody { display: block; }
+
+    tbody tr {
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      gap: 6px;
+    }
+
+    tbody td {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+      font-size: 13px;
+      border: none;
+    }
+
+    /* Cache colonnes inutiles mobile */
+    tbody td:nth-child(2),
+    tbody td:nth-child(6) { display: none; }
+
+    /* Boutons actions sur mobile */
+    tbody td:last-child {
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .modal { padding: 20px; width: 95vw; }
+  }
 </style>
 </head>
 <body>
