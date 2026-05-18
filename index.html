@@ -1090,22 +1090,55 @@ async function saveEdit() {
     });
     document.getElementById('modal').classList.remove('open');
     showToast('Modifications enregistrées', 'success');
-    await loadData();
+    updateLocalRow(parseInt(rowNum), {
+      'Nom Client ': payload['Nom Client'],
+      'Nom Client': payload['Nom Client'],
+      'Email Client ': payload['Email Client'],
+      'Email Client': payload['Email Client'],
+      'Prestation ': payload['Prestation'],
+      'Prestation': payload['Prestation'],
+      'Montant HT': payload['Montant HT'],
+      'Statut ': payload['Statut'],
+      'Statut': payload['Statut'],
+    });
   } catch(e) {
     showToast('Erreur lors de la sauvegarde', 'error');
   }
 }
 
+// Mise à jour locale immédiate sans rechargement visible
+function updateLocalRow(rowNum, changes) {
+  const idx = allData.findIndex(r => r.row_number === rowNum);
+  if (idx !== -1) {
+    allData[idx] = { ...allData[idx], ...changes };
+    renderTable();
+    updateStats();
+    renderChart(allData);
+  }
+  // Rechargement silencieux en arrière-plan après 3s
+  setTimeout(() => {
+    fetch(API_GET)
+      .then(r => r.json())
+      .then(data => {
+        allData = Array.isArray(data) ? data : [data];
+        renderTable();
+        updateStats();
+        renderChart(allData);
+      })
+      .catch(() => {}); // silencieux
+  }, 3000);
+}
+
 async function cancelRow(rowNum, client) {
   if (!confirm(`Annuler le document de ${client} ?`)) return;
   try {
-    await fetch(API_CANCEL, {
+    fetch(API_CANCEL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ row_number: rowNum, Statut: 'Annulé' })
     });
     showToast('Document annulé', 'success');
-    await loadData();
+    updateLocalRow(rowNum, { 'Statut ': 'Annulé', 'Statut': 'Annulé' });
   } catch(e) {
     showToast('Erreur lors de l\'annulation', 'error');
   }
@@ -1116,7 +1149,7 @@ async function markPaid(rowNum, client) {
   const row = allData.find(r => r.row_number === rowNum);
   if (!row) return;
   try {
-    await fetch(API_UPDATE, {
+    fetch(API_UPDATE, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -1129,7 +1162,7 @@ async function markPaid(rowNum, client) {
       })
     });
     showToast('Marqué comme payé ✓', 'success');
-    await loadData();
+    updateLocalRow(rowNum, { 'Statut ': 'Payé', 'Statut': 'Payé' });
   } catch(e) {
     showToast('Erreur', 'error');
   }
@@ -1138,7 +1171,7 @@ async function markPaid(rowNum, client) {
 async function sendPayment(rowNum, client, email, prestation, montant, numero) {
   if (!confirm(`Envoyer un lien de paiement de ${montant}€ à ${client} ?`)) return;
   try {
-    await fetch(API_PAYMENT, {
+    fetch(API_PAYMENT, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -1151,7 +1184,6 @@ async function sendPayment(rowNum, client, email, prestation, montant, numero) {
       })
     });
     showToast('Lien de paiement envoyé à ' + client + ' ✓', 'success');
-    await loadData();
   } catch(e) {
     showToast('Erreur lors de l\'envoi', 'error');
   }
@@ -1160,7 +1192,7 @@ async function sendPayment(rowNum, client, email, prestation, montant, numero) {
 async function sendSignature(rowNum, client, email, prestation, montant, numero) {
   if (!confirm(`Envoyer le devis de ${client} pour signature ?`)) return;
   try {
-    await fetch(API_SIGNATURE, {
+    fetch(API_SIGNATURE, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -1173,7 +1205,7 @@ async function sendSignature(rowNum, client, email, prestation, montant, numero)
       })
     });
     showToast('Email de signature envoyé à ' + client + ' ✓', 'success');
-    await loadData();
+    updateLocalRow(rowNum, { 'Statut ': 'En attente signature', 'Statut': 'En attente signature' });
   } catch(e) {
     showToast('Erreur lors de l\'envoi', 'error');
   }
