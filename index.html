@@ -561,8 +561,8 @@
 
   /* MOBILE RESPONSIVE */
   @media (max-width: 768px) {
-    .sidebar { display: none; }
-    .main { margin-left: 0 !important; }
+    .sidebar { display: none !important; }
+    .main { margin-left: 0 !important; display: block !important; }
 
     .header { padding: 14px 16px; }
     .header-title { font-size: 14px; }
@@ -895,7 +895,9 @@ function checkLogin() {
   const pwd = document.getElementById('login-pwd').value;
   if (pwd === PASSWORD) {
     document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
+    if (window.innerWidth > 768) {
+      document.getElementById('app').style.display = 'flex';
+    }
     document.querySelector('.main').style.display = 'block';
     sessionStorage.setItem('yn_auth', '1');
     loadData();
@@ -915,7 +917,9 @@ function logout() {
 
 if (sessionStorage.getItem('yn_auth') === '1') {
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
+  if (window.innerWidth > 768) {
+    document.getElementById('app').style.display = 'flex';
+  }
   document.querySelector('.main').style.display = 'block';
   loadData();
 }
