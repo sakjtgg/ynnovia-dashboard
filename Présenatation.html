@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ynnovia — Devis & Factures en 30 secondes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#04050F;
+  --bg2:#080B1A;
+  --bg3:#0C1024;
+  --blue:#2563EB;
+  --blue2:#3B82F6;
+  --blue3:#60A5FA;
+  --glow:rgba(37,99,235,0.35);
+  --glow2:rgba(96,165,250,0.15);
+  --text:#E8EBF4;
+  --muted:#6B7A99;
+  --border:rgba(59,130,246,0.12);
+  --border2:rgba(59,130,246,0.25);
+  --white:#fff;
+  --accent:#C8A96E;
+}
+html{scroll-behavior:smooth}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+
+/* STARS BG */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%,rgba(37,99,235,0.18) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 20%,rgba(96,165,250,0.08) 0%,transparent 50%),
+    radial-gradient(ellipse 60% 40% at 20% 80%,rgba(37,99,235,0.06) 0%,transparent 50%);
+  pointer-events:none;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1rem 2.5rem;display:flex;justify-content:space-between;align-items:center;
+  background:rgba(4,5,15,0.8);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.3rem;color:var(--white);letter-spacing:-0.02em}
+.logo span{color:var(--blue2)}
+nav ul{list-style:none;display:flex;gap:2rem;align-items:center}
+nav ul a{text-decoration:none;color:var(--muted);font-size:.88rem;transition:color .2s}
+nav ul a:hover{color:var(--text)}
+.nav-cta{
+  background:var(--blue)!important;color:#fff!important;
+  padding:.55rem 1.3rem!important;border-radius:100px!important;
+  font-weight:500!important;transition:all .2s!important;
+  box-shadow:0 0 20px var(--glow)!important;
+}
+.nav-cta:hover{background:var(--blue2)!important;box-shadow:0 0 30px var(--glow)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:.4rem}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(4,5,15,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:1.5rem 2rem;z-index:99}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;color:var(--muted);text-decoration:none;font-size:1rem;padding:.8rem 0;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border:none;color:var(--blue2);font-weight:500}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:8rem 2.5rem 5rem;position:relative;z-index:1;
+}
+.hero-inner{max-width:780px;margin:0 auto;text-align:center}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(37,99,235,0.1);border:1px solid var(--border2);
+  padding:.4rem 1.1rem;border-radius:100px;
+  font-size:.78rem;color:var(--blue3);margin-bottom:2rem;font-weight:500;
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(59,130,246,0.4)}50%{opacity:.6;box-shadow:0 0 0 6px transparent}}
+h1{
+  font-family:"Syne",sans-serif;
+  font-size:clamp(2.5rem,6vw,4.2rem);font-weight:800;
+  line-height:1.08;letter-spacing:-0.03em;color:var(--white);
+  margin-bottom:1.5rem;
+}
+h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--blue2),var(--blue3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:1.1rem;color:var(--muted);
+  line-height:1.75;max-width:560px;margin:0 auto 2.5rem;font-weight:300;
+}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  background:var(--blue);color:#fff;
+  padding:.88rem 2rem;border-radius:100px;
+  text-decoration:none;font-weight:500;font-size:.95rem;
+  transition:all .25s;border:none;cursor:pointer;
+  font-family:"DM Sans",sans-serif;
+  box-shadow:0 0 24px var(--glow);
+}
+.btn-primary:hover{background:var(--blue2);box-shadow:0 0 36px var(--glow);transform:translateY(-1px)}
+.btn-ghost{
+  color:var(--muted);font-size:.9rem;text-decoration:none;
+  padding:.88rem 1.5rem;border:1px solid var(--border2);
+  border-radius:100px;transition:all .2s;
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--blue2)}
+.hero-stats{
+  display:flex;gap:0;margin-top:4.5rem;
+  border:1px solid var(--border);border-radius:1.2rem;
+  overflow:hidden;background:var(--bg2);
+}
+.stat{flex:1;padding:1.5rem;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border:none}
+.stat-num{font-family:"Syne",sans-serif;font-weight:700;font-size:1.8rem;color:var(--white);letter-spacing:-0.03em}
+.stat-label{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+
+/* SECTION */
+.section-wrap{position:relative;z-index:1;padding:2rem 1.5rem}
+.inner{max-width:1000px;margin:0 auto}
+.section-tag{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue2);margin-bottom:.7rem}
+.section-title{font-family:"Syne",sans-serif;font-weight:700;font-size:clamp(1.7rem,3.5vw,2.5rem);letter-spacing:-0.025em;color:var(--white);line-height:1.15;margin-bottom:.8rem}
+.section-sub{font-size:1rem;color:var(--muted);max-width:500px;line-height:1.7;font-weight:300}
+
+/* CARD WRAPPER */
+.card-section{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:1.5rem;padding:3.5rem;
+  box-shadow:0 0 60px rgba(37,99,235,0.04);
+}
+
+/* HOW IT WORKS */
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:3rem;background:var(--border);border-radius:1rem;overflow:hidden}
+.step{background:var(--bg2);padding:2rem 1.6rem}
+.step-num{font-family:"Syne",sans-serif;font-weight:800;font-size:2.2rem;color:var(--border2);line-height:1;margin-bottom:.9rem}
+.step-icon{width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,0.1);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:.8rem;font-size:1.1rem}
+.step h3{font-family:"Syne",sans-serif;font-weight:700;font-size:.95rem;color:var(--white);margin-bottom:.45rem}
+.step p{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+/* DEMO */
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;margin-top:2.5rem}
+.demo-step-tag{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue2);margin-bottom:.25rem}
+.demo-step-name{font-size:.9rem;color:rgba(232,235,244,0.55);margin-bottom:.8rem;font-weight:400}
+
+/* CHAT */
+.chat-box{background:#050814;border:1px solid var(--border);border-radius:1rem;overflow:hidden}
+.chat-head{background:#080B1A;padding:.8rem 1.1rem;display:flex;align-items:center;gap:.7rem;border-bottom:1px solid var(--border)}
+.chat-av{width:32px;height:32px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;box-shadow:0 0 10px var(--glow)}
+.chat-nm{font-size:.85rem;font-weight:500;color:var(--white)}
+.chat-st{font-size:.7rem;color:var(--muted)}
+.chat-st-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#4ade80;margin-right:.3rem}
+.chat-msgs{padding:1rem;min-height:260px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:.6rem}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.msg{display:flex;gap:.45rem;align-items:flex-end}
+.msg.user{justify-content:flex-end}
+.msg-av{width:24px;height:24px;border-radius:50%;background:var(--blue);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;color:#fff}
+.msg-bub{max-width:82%;padding:.58rem .88rem;border-radius:.9rem;font-size:.81rem;line-height:1.55;word-break:break-word}
+.msg.bot .msg-bub{background:#0D1229;color:rgba(232,235,244,0.88);border-bottom-left-radius:.2rem;border:1px solid var(--border)}
+.msg.user .msg-bub{background:var(--blue);color:#fff;border-bottom-right-radius:.2rem}
+.msg-bub strong{font-weight:600;color:var(--blue3)}
+.msg.user .msg-bub strong{color:#fff}
+.typing-row{display:flex;gap:.45rem;align-items:flex-end}
+.typing{display:flex;gap:3px;align-items:center;padding:.58rem .88rem;background:#0D1229;border:1px solid var(--border);border-radius:.9rem;border-bottom-left-radius:.2rem;width:fit-content}
+.typing span{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.chat-input-row{padding:.8rem 1rem;border-top:1px solid var(--border);display:flex;gap:.6rem;align-items:center;background:#080B1A}
+.chat-inp{flex:1;background:#0D1229;border:1px solid var(--border);border-radius:100px;padding:.5rem .85rem;color:var(--text);font-size:.81rem;font-family:"DM Sans",sans-serif;outline:none;transition:border-color .2s}
+.chat-inp:focus{border-color:var(--blue2)}
+.chat-inp::placeholder{color:var(--muted);opacity:.6}
+.chat-send{width:32px;height:32px;border-radius:50%;background:var(--blue);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;box-shadow:0 0 10px var(--glow)}
+.chat-send:hover{background:var(--blue2)}
+.chat-send svg{width:13px;height:13px;fill:#fff}
+
+/* EMAIL PREVIEW */
+.email-wrap{background:#050814;border:1px solid var(--border);border-radius:1rem;overflow:hidden;opacity:.28;transition:opacity .5s,border-color .3s;cursor:default}
+.email-wrap.ready{opacity:1;cursor:pointer}
+.email-wrap.ready:hover{border-color:var(--blue2);box-shadow:0 0 20px var(--glow2)}
+.email-topbar{background:#080B1A;padding:.62rem .9rem;display:flex;align-items:center;gap:.38rem}
+.e-dot{width:8px;height:8px;border-radius:50%}
+.e-inbox{font-size:.68rem;color:var(--muted);margin-left:auto;opacity:.5}
+.email-body{padding:.85rem}
+.email-item{background:#0D1229;border:1px solid var(--border);border-radius:.7rem;padding:.85rem .95rem}
+.email-wrap.ready .email-item{border-color:var(--border2)}
+.e-from{font-size:.68rem;color:var(--muted);margin-bottom:.22rem}
+.e-subject{font-size:.84rem;font-weight:600;color:var(--white);margin-bottom:.22rem;display:flex;align-items:center;gap:.4rem}
+.e-new{background:var(--blue);color:#fff;font-size:.58rem;font-weight:700;padding:.1rem .42rem;border-radius:100px;display:none}
+.e-excerpt{font-size:.74rem;color:var(--muted);line-height:1.4}
+.e-hint{padding:.6rem;text-align:center;font-size:.7rem;color:var(--muted);opacity:.4}
+.email-wrap.ready .e-hint{color:var(--blue3);opacity:1}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;z-index:1000;background:rgba(4,5,15,0.85);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-ov.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:1.3rem;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;animation:mIn .3s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(12px)}to{opacity:1;transform:none}}
+.mhead{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.mhead-title{font-size:.96rem;font-weight:600;color:var(--white)}
+.mhead-sub{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.mcls{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;width:26px;height:26px;border-radius:50%;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.mcls:hover{background:var(--bg3);color:var(--text)}
+.mfields{padding:.85rem 1.5rem;border-bottom:1px solid var(--border)}
+.mf{display:flex;gap:.7rem;font-size:.79rem;padding:.28rem 0;border-bottom:1px solid var(--border)}
+.mf:last-child{border:none}
+.mf-l{color:var(--muted);min-width:40px;font-weight:500;flex-shrink:0}
+.mf-v{color:var(--text)}
+.devis-area{padding:1.2rem 1.5rem}
+.devis-card{background:var(--bg3);border:1px solid var(--border);border-radius:.85rem;padding:1.5rem}
+.d-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.d-name{font-family:"Syne",sans-serif;font-weight:800;font-size:1.1rem;color:var(--white)}
+.d-name span{color:var(--blue2)}
+.d-num{font-size:.7rem;color:var(--muted);background:var(--bg2);padding:.28rem .6rem;border-radius:.4rem;border:1px solid var(--border);font-weight:500}
+.d-parties{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1rem}
+.dp-l{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.32rem}
+.dp-n{font-weight:600;font-size:.86rem;color:var(--white);margin-bottom:.1rem}
+.dp-d{font-size:.75rem;color:var(--muted);line-height:1.5}
+.d-tbl{width:100%;border-collapse:collapse;margin-bottom:1rem;font-size:.79rem}
+.d-tbl th{text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.32rem 0;border-bottom:1px solid var(--border);font-weight:600}
+.d-tbl td{padding:.52rem 0;border-bottom:1px solid rgba(59,130,246,0.06);color:var(--text)}
+.d-tbl td:last-child{text-align:right;font-weight:500;color:var(--white)}
+.d-total{display:flex;justify-content:flex-end}
+.d-total-box{background:var(--blue);color:#fff;padding:.75rem 1.1rem;border-radius:.65rem;min-width:150px;box-shadow:0 0 20px var(--glow)}
+.dtl{font-size:.68rem;margin-bottom:.15rem;opacity:.65}
+.dta{font-family:"Syne",sans-serif;font-weight:700;font-size:1.35rem;letter-spacing:-0.03em}
+.d-footer{margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.68rem;color:var(--muted);text-align:center;line-height:1.6}
+.m-bottom{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.m-hint{font-size:.74rem;color:var(--muted)}
+.send-btn{background:var(--blue);color:#fff;border:none;padding:.62rem 1.3rem;border-radius:100px;font-size:.84rem;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:.42rem;transition:all .2s;font-family:"DM Sans",sans-serif;box-shadow:0 0 16px var(--glow)}
+.send-btn:hover{background:var(--blue2)}
+.sent-view{display:none;text-align:center;padding:2.5rem 2rem}
+.sent-view.show{display:block}
+.sent-icon{font-size:2.2rem;margin-bottom:.7rem}
+.sent-title{font-family:"Syne",sans-serif;font-weight:700;font-size:1.2rem;color:var(--white);margin-bottom:.32rem}
+.sent-sub{color:var(--muted);font-size:.84rem;line-height:1.6;margin-bottom:1.1rem}
+.cls-sent{background:var(--blue);color:#fff;border:none;padding:.62rem 1.5rem;border-radius:100px;font-size:.84rem;cursor:pointer;font-family:"DM Sans",sans-serif}
+
+/* DASHBOARD */
+.dash-wrap{background:#04060F;border:1px solid var(--border);border-radius:1.1rem;overflow:hidden;display:flex;margin-top:2.5rem}
+.dash-side{background:#020510;width:170px;padding:1rem;border-right:1px solid var(--border);flex-shrink:0}
+.ds-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:.9rem;color:var(--white);margin-bottom:.2rem}
+.ds-logo span{color:var(--blue2)}
+.ds-badge{background:rgba(37,99,235,0.12);color:var(--blue3);font-size:.56rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.15rem .45rem;border-radius:.28rem;display:inline-block;margin-bottom:1rem;border:1px solid var(--border2)}
+.ds-nav{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;border-radius:.4rem;font-size:.76rem;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:.15rem}
+.ds-nav:hover{background:rgba(37,99,235,0.06);color:var(--text)}
+.ds-nav.on{background:rgba(37,99,235,0.1);color:var(--blue3)}
+.ds-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.dash-main{flex:1;padding:1.2rem;overflow:hidden;min-width:0}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.dash-title{font-family:"Syne",sans-serif;font-weight:700;font-size:.92rem;color:var(--white)}
+.dash-date{font-size:.65rem;color:var(--muted)}
+.dash-btns{display:flex;gap:.38rem}
+.dash-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted);font-size:.68rem;padding:.25rem .6rem;border-radius:.35rem;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s}
+.dash-btn:hover{background:rgba(255,255,255,0.08);color:var(--text)}
+.dash-btn.red{color:#f87171;border-color:rgba(248,113,113,0.15)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem}
+.dstat{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:.6rem;padding:.75rem}
+.dstat-lbl{font-size:.6rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.32rem}
+.dstat-val{font-family:"Syne",sans-serif;font-weight:700;font-size:1.2rem;color:var(--white)}
+.dstat-val.g{color:#4ade80}.dstat-val.a{color:var(--accent)}.dstat-val.b{color:var(--blue3)}
+.dtable-card{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:.65rem;overflow:hidden}
+.dtc-head{padding:.65rem .85rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.dtc-title{font-size:.76rem;font-weight:600;color:var(--white)}
+.dtc-filters{display:flex;gap:.22rem}
+.dtc-btn{background:transparent;border:none;color:var(--muted);font-size:.68rem;padding:.2rem .48rem;border-radius:.28rem;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s}
+.dtc-btn.on{background:rgba(37,99,235,0.12);color:var(--blue3)}
+.dtc-btn:hover{color:var(--text)}
+.dtbl{width:100%;border-collapse:collapse;font-size:.71rem}
+.dtbl th{text-align:left;padding:.52rem .8rem;color:var(--muted);font-weight:500;font-size:.63rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.dtbl td{padding:.62rem .8rem;border-bottom:1px solid rgba(59,130,246,0.05);color:rgba(232,235,244,0.65);vertical-align:middle}
+.dtbl tr:last-child td{border:none}
+.dtbl tr:hover td{background:rgba(37,99,235,0.03)}
+.tbadge{font-size:.58rem;font-weight:700;padding:.12rem .42rem;border-radius:.25rem;text-transform:uppercase;letter-spacing:.04em}
+.tb-d{background:rgba(96,165,250,0.1);color:var(--blue3)}
+.tb-f{background:rgba(74,222,128,0.1);color:#4ade80}
+.sbadge{font-size:.66rem;padding:.15rem .45rem;border-radius:.25rem;font-weight:600}
+.sb-a{background:rgba(200,169,110,0.1);color:var(--accent)}
+.sb-s{background:rgba(74,222,128,0.1);color:#4ade80}
+.sb-p{background:rgba(96,165,250,0.1);color:var(--blue3)}
+.acts{display:flex;gap:.25rem}
+.ab{width:23px;height:23px;border-radius:.3rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:transform .15s}
+.ab:hover{transform:scale(1.12)}
+.ab-s{background:rgba(200,169,110,0.1);color:var(--accent)}
+.ab-p{background:rgba(74,222,128,0.1);color:#4ade80}
+.ab-e{background:rgba(255,255,255,0.05);color:var(--muted)}
+.ab-o{background:rgba(96,165,250,0.1);color:var(--blue3)}
+.ab-d{background:rgba(248,113,113,0.05);color:#f87171}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.5rem}
+.feat-card{background:var(--bg2);border:1px solid var(--border);border-radius:1.1rem;padding:1.8rem 1.5rem;transition:border-color .3s}
+.feat-card:hover{border-color:var(--border2)}
+.feat-icon{font-size:1.5rem;margin-bottom:.9rem}
+.feat-title{font-family:"Syne",sans-serif;font-weight:700;font-size:.98rem;color:var(--white);margin-bottom:.5rem}
+.feat-desc{font-size:.84rem;color:var(--muted);line-height:1.6}
+
+/* PROOF */
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.5rem}
+.proof-card{background:var(--bg2);border:1px solid var(--border);border-radius:1.1rem;padding:1.5rem}
+.proof-q{font-size:.87rem;line-height:1.7;color:var(--text);margin-bottom:1rem;font-style:italic}
+.proof-auth{display:flex;align-items:center;gap:.65rem}
+.proof-av{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;color:#fff;flex-shrink:0}
+.proof-name{font-size:.82rem;font-weight:600;color:var(--white)}
+.proof-job{font-size:.73rem;color:var(--muted)}
+
+/* FAQ */
+.faq-wrap{max-width:640px;margin-top:2.5rem}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 0;cursor:pointer;font-size:.9rem;font-weight:500;color:var(--text);transition:color .2s;gap:1rem}
+.faq-q:hover{color:var(--white)}
+.faq-ic{width:24px;height:24px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;font-size:.85rem;color:var(--muted)}
+.faq-item.open .faq-ic{transform:rotate(45deg);background:var(--blue);border-color:var(--blue);color:#fff}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease;font-size:.84rem;color:var(--muted);line-height:1.7}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:1rem}
+
+/* CTA */
+.cta-section{
+  background:linear-gradient(135deg,rgba(37,99,235,0.2) 0%,rgba(37,99,235,0.05) 100%);
+  border:1px solid var(--border2);border-radius:1.5rem;
+  padding:4.5rem 3rem;text-align:center;
+  margin:2rem 1.5rem;position:relative;z-index:1;
+  box-shadow:0 0 80px rgba(37,99,235,0.08);
+}
+.cta-section h2{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.03em;color:var(--white);margin-bottom:.9rem}
+.cta-section p{font-size:.98rem;color:var(--muted);margin-bottom:2rem;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.7;font-weight:300}
+
+footer{position:relative;z-index:1;padding:1.8rem 2.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:.85rem 1.3rem;border-radius:.85rem;font-size:.82rem;z-index:9999;transform:translateY(120px);opacity:0;transition:all .35s;max-width:300px;line-height:1.5;box-shadow:0 0 24px var(--glow2)}
+.toast.show{transform:translateY(0);opacity:1}
+
+.reveal{opacity:0;transform:translateY(18px);transition:all .65s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav ul{display:none}
+  .hamburger{display:flex}
+  .hero{padding:7rem 1.5rem 4rem}
+  .hero-inner{text-align:left}
+  .hero-actions{justify-content:flex-start}
+  .hero-stats{flex-direction:column}
+  .stat{border-right:none;border-bottom:1px solid var(--border)}
+  .stat:last-child{border:none}
+  .steps-grid{grid-template-columns:1fr}
+  .demo-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .proof-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .dash-side{display:none}
+  .d-parties{grid-template-columns:1fr}
+  .cta-section{padding:3rem 1.5rem}
+  footer{flex-direction:column;gap:1rem;text-align:center}
+  .card-section{padding:2rem 1.5rem}
+}
+@media(max-width:600px){
+  nav{padding:1rem 1.2rem}
+  h1{font-size:2.2rem}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .dtbl th:nth-child(3),.dtbl td:nth-child(3){display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Ynn<span>ovia</span></div>
+  <ul>
+    <li><a href="#comment">Comment ca marche</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="mailto:Ynnoviaa@gmail.com" class="nav-cta">Nous contacter</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#comment" onclick="closeMenu()">Comment ca marche</a>
+  <a href="#demo" onclick="closeMenu()">Demo interactive</a>
+  <a href="#dashboard" onclick="closeMenu()">Dashboard</a>
+  <a href="mailto:Ynnoviaa@gmail.com">Nous contacter →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner reveal">
+    <div class="hero-badge"><span class="badge-dot"></span>Concu pour les artisans francais</div>
+    <h1>Un devis en<br><em>30 secondes.</em><br>Depuis votre telephone.</h1>
+    <p class="hero-sub">Fini les carnets papier et les tableurs compliques. Ynnovia envoie un devis PDF professionnel a votre client par email — aussi simplement qu'un message WhatsApp.</p>
+    <div class="hero-actions">
+      <a href="#demo" class="btn-primary">Voir la demo →</a>
+      <a href="#contact" class="btn-ghost">Nous contacter</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">30s</div><div class="stat-label">pour envoyer un devis</div></div>
+      <div class="stat"><div class="stat-num">0€</div><div class="stat-label">de frais caches</div></div>
+      <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">disponible, meme le weekend</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<div id="comment" class="section-wrap">
+  <div class="inner">
+    <div class="card-section reveal">
+      <div class="section-tag">Comment ca marche</div>
+      <div class="section-title">Aussi simple qu'un SMS</div>
+      <div class="section-sub">Pas d'application a telecharger. Pas de formation. Vous utilisez deja Telegram.</div>
+      <div class="steps-grid">
+        <div class="step"><div class="step-num">01</div><div class="step-icon">💬</div><h3>Vous envoyez un message</h3><p>Tapez /devis dans Telegram. Le bot vous guide : nom du client, prestation, montant.</p></div>
+        <div class="step"><div class="step-num">02</div><div class="step-icon">⚡</div><h3>Le devis se genere</h3><p>En quelques secondes, Ynnovia cree un PDF professionnel avec votre logo et les mentions legales.</p></div>
+        <div class="step"><div class="step-num">03</div><div class="step-icon">✉️</div><h3>Votre client recoit tout</h3><p>Le devis part automatiquement par email. Votre client peut signer en ligne ou payer directement.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div id="demo" class="section-wrap">
+  <div class="inner">
+    <div class="card-section reveal">
+      <div class="section-tag">Simulation interactive</div>
+      <div class="section-title">Voyez-le en action</div>
+      <div class="section-sub">Testez comme si c'etait le vrai systeme. Tapez ce que vous voulez — le bot vous guide exactement comme sur Telegram.</div>
+      <div class="demo-grid">
+        <div>
+          <div class="demo-step-tag">Etape 1</div>
+          <div class="demo-step-name">Conversation avec le bot</div>
+          <div class="chat-box">
+            <div class="chat-head">
+              <div class="chat-av">Y</div>
+              <div>
+                <div class="chat-nm">Ynnovia Bot</div>
+                <div class="chat-st"><span class="chat-st-dot"></span>En ligne</div>
+              </div>
+            </div>
+            <div class="chat-msgs" id="chatMsgs"></div>
+            <div class="chat-input-row">
+              <input class="chat-inp" id="chatInp" type="text" placeholder="Ecrivez un message..." autocomplete="off">
+              <button class="chat-send" onclick="sendMsg()">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="demo-step-tag">Etape 2</div>
+          <div class="demo-step-name">Apercu du devis genere</div>
+          <div class="email-wrap" id="emailWrap" onclick="clickEmail()">
+            <div class="email-topbar">
+              <div class="e-dot" style="background:#ff5f57"></div>
+              <div class="e-dot" style="background:#febc2e;margin-left:4px"></div>
+              <div class="e-dot" style="background:#28c840;margin-left:4px"></div>
+              <span class="e-inbox">Boite de reception</span>
+            </div>
+            <div class="email-body">
+              <div class="email-item">
+                <div class="e-from">Ynnovia &lt;devis@ynnovia.fr&gt;</div>
+                <div class="e-subject">Votre devis est pret <span class="e-new" id="eNew">Nouveau</span></div>
+                <div class="e-excerpt" id="eExcerpt">Terminez la conversation pour voir votre devis ici...</div>
+              </div>
+            </div>
+            <div class="e-hint" id="eHint">Completez la conversation pour debloquer le devis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="section-wrap">
+  <div class="inner">
+    <div class="card-section reveal">
+      <div class="section-tag">Offre Premium &amp; Business</div>
+      <div class="section-title">Un tableau de bord<br>pour piloter votre activite</div>
+      <div class="section-sub">Suivez vos devis, envoyez des liens de paiement et de signature — directement depuis votre navigateur.</div>
+      <div class="dash-wrap">
+        <div class="dash-side">
+          <div class="ds-logo">Ynn<span>ovia</span></div>
+          <div class="ds-badge">Premium</div>
+          <div class="ds-nav on" onclick="setTab('dashboard',this)"><span class="ds-dot"></span>Dashboard</div>
+          <div class="ds-nav" onclick="setTab('devis',this)"><span class="ds-dot"></span>Devis</div>
+          <div class="ds-nav" onclick="setTab('factures',this)"><span class="ds-dot"></span>Factures</div>
+          <div class="ds-nav" onclick="setTab('historique',this)"><span class="ds-dot"></span>Historique</div>
+        </div>
+        <div class="dash-main">
+          <div class="dash-top">
+            <div>
+              <div class="dash-title" id="dashTitle">Tableau de bord</div>
+              <div class="dash-date">vendredi 29 mai 2026</div>
+            </div>
+            <div class="dash-btns">
+              <button class="dash-btn" onclick="toast2('Donnees actualisees !')">↻ Actualiser</button>
+              <button class="dash-btn red" onclick="toast2('A bientot !')">Deconnexion</button>
+            </div>
+          </div>
+          <div class="stats-row">
+            <div class="dstat"><div class="dstat-lbl">Total documents</div><div class="dstat-val">17</div></div>
+            <div class="dstat"><div class="dstat-lbl">Montant HT</div><div class="dstat-val g">8 150 €</div></div>
+            <div class="dstat"><div class="dstat-lbl">En attente</div><div class="dstat-val a">2</div></div>
+            <div class="dstat"><div class="dstat-lbl">Taux acceptation</div><div class="dstat-val b">73%</div></div>
+          </div>
+          <div class="dtable-card">
+            <div class="dtc-head">
+              <div class="dtc-title" id="dashTableTitle">Devis &amp; Factures recents</div>
+              <div class="dtc-filters">
+                <button class="dtc-btn on" onclick="filterTbl('tous',this)">Tous</button>
+                <button class="dtc-btn" onclick="filterTbl('attente',this)">Attente</button>
+                <button class="dtc-btn" onclick="filterTbl('signe',this)">Signes</button>
+                <button class="dtc-btn" onclick="filterTbl('paye',this)">Payes</button>
+              </div>
+            </div>
+            <table class="dtbl">
+              <thead><tr><th>Type</th><th>Client</th><th>Prestation</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead>
+              <tbody id="dashBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:1.2rem">
+        <div style="background:rgba(37,99,235,0.06);border:1px solid var(--border2);border-radius:.9rem;padding:1rem 1.1rem">
+          <div style="font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue3);margin-bottom:.35rem">✍️ Signature electronique</div>
+          <div style="font-size:.82rem;color:var(--muted);line-height:1.5">Le client signe depuis son telephone. La signature est legalement valide et horodatee.</div>
+        </div>
+        <div style="background:rgba(37,99,235,0.06);border:1px solid var(--border2);border-radius:.9rem;padding:1rem 1.1rem">
+          <div style="font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue3);margin-bottom:.35rem">💳 Paiement en ligne</div>
+          <div style="font-size:.82rem;color:var(--muted);line-height:1.5">Envoyez un lien Stripe depuis le dashboard. Votre client paie par carte en quelques secondes.</div>
+        </div>
+        <div style="background:rgba(37,99,235,0.06);border:1px solid var(--border2);border-radius:.9rem;padding:1rem 1.1rem">
+          <div style="font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue3);margin-bottom:.35rem">🔔 Notifications Telegram</div>
+          <div style="font-size:.82rem;color:var(--muted);line-height:1.5">Recevez une alerte des qu'un client signe ou paie. Tout en temps reel sur votre telephone.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section-wrap">
+  <div class="inner">
+    <div class="reveal">
+      <div class="section-tag">Ce qui vous attend</div>
+      <div class="section-title">Tout ce dont vous avez besoin</div>
+    </div>
+    <div class="features-grid reveal">
+      <div class="feat-card"><div class="feat-icon">📋</div><div class="feat-title">Devis & Factures PDF</div><div class="feat-desc">PDF professionnels avec votre nom, logo, SIRET et mentions legales. Envoyes automatiquement par email.</div></div>
+      <div class="feat-card"><div class="feat-icon">🔄</div><div class="feat-title">Relances automatiques</div><div class="feat-desc">Le systeme relance vos clients automatiquement apres 3 jours sans reponse. Vous n'oubliez plus rien.</div></div>
+      <div class="feat-card"><div class="feat-icon">📊</div><div class="feat-title">Dashboard & statistiques</div><div class="feat-desc">Suivez votre chiffre d'affaires, le statut de chaque devis et l'historique complet de vos prestations.</div></div>
+      <div class="feat-card"><div class="feat-icon">✍️</div><div class="feat-title">Signature electronique</div><div class="feat-desc">Votre client signe depuis son telephone en quelques secondes. Valeur legale garantie.</div></div>
+      <div class="feat-card"><div class="feat-icon">💳</div><div class="feat-title">Paiement en ligne</div><div class="feat-desc">Recevez vos acomptes directement en ligne. Votre client paie depuis le devis, vous etes paye le jour meme.</div></div>
+      <div class="feat-card"><div class="feat-icon">📱</div><div class="feat-title">100% sur telephone</div><div class="feat-desc">Tout se fait depuis Telegram sur votre iPhone. Sur un chantier, dans votre camion — ou que vous soyez.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROOF -->
+<div class="section-wrap">
+  <div class="inner reveal">
+    <div class="section-tag">Ils l'utilisent deja</div>
+    <div class="section-title">Des artisans comme vous</div>
+    <div class="proof-grid">
+      <div class="proof-card"><div class="proof-q">"Je faisais mes devis a la main, j'y passais des heures. Maintenant c'est fait depuis mon van en 2 minutes."</div><div class="proof-auth"><div class="proof-av" style="background:var(--blue)">MB</div><div><div class="proof-name">Marc B.</div><div class="proof-job">Plombier · Paris 17e</div></div></div></div>
+      <div class="proof-card"><div class="proof-q">"Mes clients recoivent le devis avant que je sois rentre chez moi. J'ai signe 3 chantiers de plus le premier mois."</div><div class="proof-auth"><div class="proof-av" style="background:#1e3a5f">KD</div><div><div class="proof-name">Karim D.</div><div class="proof-job">Electricien · Lyon</div></div></div></div>
+      <div class="proof-card"><div class="proof-q">"Avec le paiement en ligne, mes clients paient le jour meme. Fini les relances qui trainent des semaines."</div><div class="proof-auth"><div class="proof-av" style="background:#0f2744">SR</div><div><div class="proof-name">Sophie R.</div><div class="proof-job">Peintre · Bordeaux</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div id="contact" class="section-wrap">
+  <div class="inner reveal">
+    <div class="section-tag">Questions frequentes</div>
+    <div class="section-title">Tout ce que vous voulez savoir</div>
+    <div class="faq-wrap">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Est-ce que je dois avoir des connaissances en informatique ?</span><span class="faq-ic">+</span></div><div class="faq-a">Absolument pas. Si vous savez envoyer un message WhatsApp, vous savez utiliser Ynnovia. L'installation est faite par notre equipe en moins d'une heure.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Telegram, c'est gratuit ?</span><span class="faq-ic">+</span></div><div class="faq-a">Oui, Telegram est une application gratuite disponible sur iPhone et Android. Elle fonctionne exactement comme WhatsApp.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Mes devis sont-ils legalement valides ?</span><span class="faq-ic">+</span></div><div class="faq-a">Oui. Les PDFs incluent toutes les mentions legales obligatoires : numero de devis, date, SIRET, TVA, conditions de paiement. Conformes aux exigences francaises.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Combien de devis je peux envoyer ?</span><span class="faq-ic">+</span></div><div class="faq-a">Illimite. Quel que soit votre offre, vous pouvez envoyer autant de devis et factures que vous le souhaitez, sans cout supplementaire.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Comment se passe l'installation ?</span><span class="faq-ic">+</span></div><div class="faq-a">Apres votre commande, nous prenons contact avec vous sous 2h. Nous configurons tout de notre cote — vous n'avez rien a faire. En general, tout est operationnel en moins d'une heure.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section reveal">
+  <h2>Pret a gagner du temps ?</h2>
+  <p>Contactez-nous pour une demonstration gratuite. On vous montre comment ca fonctionne en direct.</p>
+  <a href="mailto:Ynnoviaa@gmail.com" class="btn-primary" style="display:inline-block">Demander une demo gratuite →</a>
+  <div style="margin-top:1rem;font-size:.78rem;color:var(--muted)">Reponse garantie sous 2h · Ynnoviaa@gmail.com</div>
+</div>
+
+<footer>
+  <div class="logo" style="font-size:1rem">Ynn<span style="color:var(--blue2)">ovia</span></div>
+  <div>© 2026 Ynnovia · <a href="mailto:Ynnoviaa@gmail.com" style="color:inherit">Ynnoviaa@gmail.com</a></div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modalOv" onclick="closeIfBg(event)">
+  <div class="modal-box">
+    <div id="devisView">
+      <div class="mhead">
+        <div><div class="mhead-title">Votre devis est pret</div><div class="mhead-sub">Gmail · Boite de reception</div></div>
+        <button class="mcls" onclick="closeModal()">✕</button>
+      </div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-l">De</div><div class="mf-v">Ynnovia &lt;devis@ynnovia.fr&gt;</div></div>
+        <div class="mf"><div class="mf-l">A</div><div class="mf-v" id="mTo">—</div></div>
+        <div class="mf"><div class="mf-l">Objet</div><div class="mf-v">Devis — <span id="mSubj">—</span></div></div>
+      </div>
+      <div class="devis-area">
+        <div class="devis-card">
+          <div class="d-top">
+            <div><div class="d-name">Ynn<span>ovia</span></div><div style="font-size:.7rem;color:var(--muted);margin-top:.18rem">Votre prestataire</div></div>
+            <div class="d-num" id="mNum">DEVIS #2026-001</div>
+          </div>
+          <div class="d-parties">
+            <div><div class="dp-l">Emetteur</div><div class="dp-n">Votre entreprise</div><div class="dp-d">SIRET : 123 456 789 00012<br>TVA : FR 12 123456789</div></div>
+            <div><div class="dp-l">Client</div><div class="dp-n" id="mName">—</div><div class="dp-d" id="mAddr">—</div></div>
+          </div>
+          <table class="d-tbl">
+            <thead><tr><th style="width:46%">Designation</th><th>Qte</th><th>Prix HT</th><th>Total HT</th></tr></thead>
+            <tbody>
+              <tr><td id="mPresta">—</td><td>1</td><td id="mPrix">—</td><td id="mTotal">—</td></tr>
+              <tr><td colspan="3" style="color:var(--muted);font-size:.74rem">TVA (10%)</td><td id="mTVA">—</td></tr>
+            </tbody>
+          </table>
+          <div class="d-total"><div class="d-total-box"><div class="dtl">Total TTC</div><div class="dta" id="mTTC">—</div></div></div>
+          <div class="d-footer">Devis valable 30 jours · En cas d'accord, merci de nous retourner ce document signe</div>
+        </div>
+      </div>
+      <div class="m-bottom">
+        <div class="m-hint">📧 Ce que votre client recoit</div>
+        <button class="send-btn" onclick="simulateSend()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          Envoyer au client
+        </button>
+      </div>
+    </div>
+    <div class="sent-view" id="sentView">
+      <div class="sent-icon">✅</div>
+      <div class="sent-title">C'est fait boss !</div>
+      <div class="sent-sub">Votre client vient de recevoir son devis.<br>Une notification vous sera envoyee des qu'il l'aura ouvert.</div>
+      <button class="cls-sent" onclick="closeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+// NAV MOBILE
+function toggleMenu(){
+  const m=document.getElementById("mobileMenu");
+  m.classList.toggle("open");
+}
+function closeMenu(){document.getElementById("mobileMenu").classList.remove("open")}
+
+// CHAT BOT
+const chatEl=document.getElementById("chatMsgs");
+const chatIn=document.getElementById("chatInp");
+let step=0;
+let dv={nom:"",email:"",adresse:"",prestation:"",prix:""};
+
+function addMsg(txt,isUser){
+  const d=document.createElement("div");
+  d.className="msg "+(isUser?"user":"bot");
+  const h=txt.replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>");
+  d.innerHTML=isUser
+    ?"<div><div class='msg-bub'>"+txt+"</div></div>"
+    :"<div class='msg-av'>Y</div><div><div class='msg-bub'>"+h+"</div></div>";
+  chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;
+}
+
+function showTyping(){
+  const d=document.createElement("div");d.className="msg bot";d.id="typing";
+  d.innerHTML="<div class='msg-av'>Y</div><div class='typing-row'><div class='typing'><span></span><span></span><span></span></div></div>";
+  chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;
+}
+function rmTyping(){const t=document.getElementById("typing");if(t)t.remove();}
+
+function botSay(txt){
+  showTyping();
+  setTimeout(function(){rmTyping();addMsg(txt,false);if(step>=8)revealEmail();},850);
+}
+
+function sendMsg(){
+  const v=chatIn.value.trim();if(!v)return;
+  addMsg(v,true);chatIn.value="";
+  setTimeout(function(){process(v);},150);
+}
+chatIn.addEventListener("keydown",function(e){if(e.key==="Enter")sendMsg();});
+
+function process(v){
+  const l=v.toLowerCase();
+  if(step===0){step=1;botSay("Super ! Commencons votre devis\n\nQuel est le **prenom et nom** de votre client ?");}
+  else if(step===1){dv.nom=v;step=2;botSay("Parfait. Quelle est son **adresse email** ?");}
+  else if(step===2){
+    dv.email=v;step=3;
+    const mask=v.length>5?v.substring(0,3)+"...@"+v.split("@").pop():"...";
+    botSay("Verifiez bien : **"+mask+"** ✉️\n\nC'est correct ? (oui / non)");
+  }
+  else if(step===3){
+    if(l==="non"||l==="no"){step=2;botSay("Pas de probleme, redonnez-moi l'adresse email :");}
+    else{step=4;botSay("Quelle est son **adresse postale** ?");}
+  }
+  else if(step===4){dv.adresse=v;step=5;botSay("Quelle est la **prestation** a facturer ?");}
+  else if(step===5){dv.prestation=v;step=6;botSay("**"+v+"** — quel est le **montant HT** en euros ?");}
+  else if(step===6){
+    dv.prix=v;step=7;
+    var p=parseFloat(v.replace(/[^0-9.]/g,""))||0;
+    var ttc=Math.round(p*1.1);
+    botSay("**"+dv.prestation+"** — **"+p+"€ HT** ("+ttc+"€ TTC)\n\nC'est bien ca ? (oui / non)");
+  }
+  else if(step===7){
+    if(l==="non"||l==="no"){step=5;botSay("Pas de probleme, redonnez-moi la prestation :");}
+    else{step=8;botSay("✅ Je genere votre devis...\n\n**C'est fait boss !** 🎉\n\nL'apercu est pret a droite — cliquez dessus pour voir ce que votre client va recevoir !");}
+  }
+  else{botSay("Le devis est pret ! Cliquez sur l'apercu email a droite 👉");}
+}
+
+function revealEmail(){
+  var w=document.getElementById("emailWrap");
+  w.classList.add("ready");
+  document.getElementById("eNew").style.display="inline";
+  document.getElementById("eExcerpt").textContent=dv.prestation+" — "+dv.prix+"€ HT";
+  document.getElementById("eHint").textContent="👆 Cliquez pour voir le devis complet";
+  var n=Math.floor(Math.random()*900)+100;
+  document.getElementById("mNum").textContent="DEVIS #2026-"+n;
+  document.getElementById("mTo").textContent=dv.email;
+  document.getElementById("mSubj").textContent=dv.prestation;
+  document.getElementById("mName").textContent=dv.nom;
+  document.getElementById("mAddr").textContent=dv.adresse;
+  document.getElementById("mPresta").textContent=dv.prestation;
+  var p=parseFloat(dv.prix.replace(/[^0-9.]/g,""))||0;
+  var tva=p*0.1;var ttc=p+tva;
+  document.getElementById("mPrix").textContent=p.toFixed(2)+"€";
+  document.getElementById("mTotal").textContent=p.toFixed(2)+"€";
+  document.getElementById("mTVA").textContent=tva.toFixed(2)+"€";
+  document.getElementById("mTTC").textContent=ttc.toFixed(2)+"€";
+}
+
+function clickEmail(){if(document.getElementById("emailWrap").classList.contains("ready"))openModal();}
+function openModal(){document.getElementById("modalOv").classList.add("open");document.getElementById("devisView").style.display="block";document.getElementById("sentView").classList.remove("show");}
+function closeModal(){document.getElementById("modalOv").classList.remove("open");}
+function closeIfBg(e){if(e.target===document.getElementById("modalOv"))closeModal();}
+function simulateSend(){document.getElementById("devisView").style.display="none";document.getElementById("sentView").classList.add("show");}
+
+// DASHBOARD
+var dashRows=[
+  {type:"devis",client:"Martin Lefebvre",prestation:"Debouchage WC",montant:"300€",statut:"signe"},
+  {type:"facture",client:"Atelier Dubois",prestation:"Installation electrique",montant:"1 200€",statut:"paye"},
+  {type:"devis",client:"Mme. Renaud",prestation:"Peinture salon",montant:"850€",statut:"attente"},
+  {type:"facture",client:"SCI Normandie",prestation:"Carrelage salle de bain",montant:"2 400€",statut:"paye"},
+  {type:"devis",client:"Paul Moreau",prestation:"Serrurerie urgence",montant:"180€",statut:"attente"},
+  {type:"facture",client:"Cafe Le Central",prestation:"Renovation facade",montant:"3 200€",statut:"paye"},
+];
+
+function renderTbl(filter){
+  var tbody=document.getElementById("dashBody");
+  var rows=filter==="tous"?dashRows:dashRows.filter(function(r){return r.statut===filter;});
+  var sl={attente:"En attente",signe:"Signe",paye:"Paye"};
+  var sc={attente:"sb-a",signe:"sb-s",paye:"sb-p"};
+  tbody.innerHTML=rows.map(function(r){
+    var acts=r.statut==="attente"
+      ?"<button class='ab ab-s' onclick='da(\"sign\",\"'"+r.client+"\")'  title='Lien signature'>✍️</button><button class='ab ab-p' onclick='da(\"pay\",\"'"+r.client+"\")'  title='Lien paiement'>💳</button><button class='ab ab-e' onclick='da(\"edit\",\"'"+r.client+"\")'  title='Modifier'>✏️</button><button class='ab ab-o' onclick='da(\"ok\",\"'"+r.client+"\")'  title='Accepte'>✓</button><button class='ab ab-d' onclick='da(\"del\",\"'"+r.client+"\")'  title='Annuler'>✕</button>"
+      :"<button class='ab ab-e' onclick='da(\"view\",\"'"+r.client+"\")'  title='Voir'>👁</button><button class='ab ab-p' onclick='da(\"pdf\",\"'"+r.client+"\")'  title='PDF'>⬇️</button>";
+    var td1="<td><span class='tbadge tb-"+r.type+"'>"+r.type+"</span></td>";
+    var td2="<td style='font-weight:500;color:var(--white)'>"+r.client+"</td>";
+    var td3="<td>"+r.prestation+"</td>";
+    var td4="<td style='font-weight:600;color:var(--white)'>"+r.montant+"</td>";
+    var td5="<td><span class='sbadge "+sc[r.statut]+"'>"+sl[r.statut]+"</span></td>";
+    var td6="<td><div class='acts'>"+acts+"</div></td>";
+    return "<tr>"+td1+td2+td3+td4+td5+td6+"</tr>";
+  }).join("");
+}
+
+function da(type,client){
+  var msgs={sign:"✍️ Lien de signature envoye a "+client+" !",pay:"💳 Lien Stripe envoye a "+client+" !",edit:"✏️ Modification de "+client+"...",ok:"✅ Devis de "+client+" accepte",del:"🗑 Devis annule",view:"👁 Document de "+client,pdf:"⬇️ PDF de "+client+" telecharge"};
+  toast2(msgs[type]||"Action effectuee");
+}
+
+function filterTbl(f,btn){
+  document.querySelectorAll(".dtc-btn").forEach(function(b){b.classList.remove("on");});
+  btn.classList.add("on");renderTbl(f);
+}
+
+function setTab(tab,el){
+  document.querySelectorAll(".ds-nav").forEach(function(n){n.classList.remove("on");});
+  el.classList.add("on");
+  var t={dashboard:"Tableau de bord",devis:"Mes devis",factures:"Mes factures",historique:"Historique"};
+  document.getElementById("dashTitle").textContent=t[tab]||tab;
+  renderTbl("tous");
+  document.querySelectorAll(".dtc-btn").forEach(function(b,i){b.classList.toggle("on",i===0);});
+}
+
+function toast2(msg){
+  var t=document.getElementById("toastEl");t.textContent=msg;t.classList.add("show");
+  setTimeout(function(){t.classList.remove("show");},3000);
+}
+
+function toggleFaq(el){el.parentElement.classList.toggle("open");}
+function openContact(plan){window.location.href="mailto:Ynnoviaa@gmail.com?subject=Demande "+plan+" Ynnovia";}
+
+var revs=document.querySelectorAll(".reveal");
+var ro=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add("visible");});},{threshold:.08});
+revs.forEach(function(r){ro.observe(r);});
+
+setTimeout(function(){addMsg("Bonjour ! 👋 Tapez n'importe quoi pour tester la demo en direct.",false);},350);
+renderTbl("tous");
+</script>
+</body>
+</html>
