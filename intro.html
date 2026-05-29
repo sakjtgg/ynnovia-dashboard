@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ynnovia</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden;font-family:sans-serif}
+#intro{position:fixed;inset:0;z-index:9999;background:#000}
+canvas{display:block;width:100%;height:100%}
+#skip{
+  position:fixed;bottom:2rem;right:2rem;z-index:10000;
+  color:rgba(255,255,255,0.3);font-size:.78rem;cursor:pointer;
+  border:1px solid rgba(255,255,255,0.1);padding:.4rem .9rem;
+  border-radius:100px;transition:all .3s;font-family:'DM Sans',sans-serif;
+  background:transparent;
+}
+#skip:hover{color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.3)}
+#site{position:fixed;inset:0;z-index:1;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
+#site.visible{opacity:1;pointer-events:all}
+iframe{width:100%;height:100%;border:none}
+</style>
+</head>
+<body>
+
+<div id="intro">
+  <canvas id="c"></canvas>
+  <button id="skip" onclick="skipIntro()">Passer →</button>
+</div>
+
+<div id="site">
+  <iframe id="siteFrame" src=""></iframe>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.8;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000005);
+scene.fog = new THREE.FogExp2(0x000010, 0.035);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 200);
+camera.position.set(0, 1.2, 28);
+camera.lookAt(0, 1.5, 0);
+
+// STARS
+const starGeo = new THREE.BufferGeometry();
+const starCount = 3000;
+const starPos = new Float32Array(starCount * 3);
+for(let i=0;i<starCount*3;i++){
+  starPos[i*3] = (Math.random()-0.5)*200;
+  starPos[i*3+1] = (Math.random()-0.5)*200;
+  starPos[i*3+2] = (Math.random()-0.5)*200;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
+const starMat = new THREE.PointsMaterial({color:0xffffff,size:0.18,transparent:true,opacity:0.7});
+scene.add(new THREE.Points(starGeo, starMat));
+
+// FLOOR - dark stone
+const floorGeo = new THREE.PlaneGeometry(20, 60);
+const floorMat = new THREE.MeshStandardMaterial({
+  color: 0x050510,
+  metalness: 0.3,
+  roughness: 0.8,
+});
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = 0;
+floor.position.z = 5;
+scene.add(floor);
+
+// DOOR FRAME
+const frameColor = 0x1a1a2e;
+const frameMat = new THREE.MeshStandardMaterial({color:frameColor,metalness:0.6,roughness:0.3});
+
+// Left pillar
+const pillarGeo = new THREE.BoxGeometry(0.4, 6, 0.4);
+const leftPillar = new THREE.Mesh(pillarGeo, frameMat);
+leftPillar.position.set(-2.2, 3, 0);
+scene.add(leftPillar);
+
+// Right pillar
+const rightPillar = new THREE.Mesh(pillarGeo, frameMat);
+rightPillar.position.set(2.2, 3, 0);
+scene.add(rightPillar);
+
+// Top bar
+const topGeo = new THREE.BoxGeometry(5.2, 0.4, 0.4);
+const topBar = new THREE.Mesh(topGeo, frameMat);
+topBar.position.set(0, 6.2, 0);
+scene.add(topBar);
+
+// DOOR PANELS
+const doorMat = new THREE.MeshStandardMaterial({
+  color: 0x0d0d1a,
+  metalness: 0.7,
+  roughness: 0.2,
+  envMapIntensity: 1,
+});
+
+const doorGeo = new THREE.BoxGeometry(2, 6, 0.08);
+
+const leftDoor = new THREE.Mesh(doorGeo, doorMat);
+leftDoor.position.set(-1, 3, 0);
+scene.add(leftDoor);
+
+const rightDoor = new THREE.Mesh(doorGeo, doorMat);
+rightDoor.position.set(1, 3, 0);
+scene.add(rightDoor);
+
+// DOOR GLOW EDGES
+const edgeMatL = new THREE.MeshStandardMaterial({
+  color:0x2563EB, emissive:0x2563EB, emissiveIntensity:2,
+  metalness:0, roughness:1
+});
+const edgeGeoV = new THREE.BoxGeometry(0.04, 6.1, 0.15);
+const edgeGeoH = new THREE.BoxGeometry(4.5, 0.04, 0.15);
+
+// vertical edges
+const edgeL = new THREE.Mesh(edgeGeoV, edgeMatL);
+edgeL.position.set(-2.0, 3, 0.01);
+scene.add(edgeL);
+
+const edgeR = new THREE.Mesh(edgeGeoV, edgeMatL);
+edgeR.position.set(2.0, 3, 0.01);
+scene.add(edgeR);
+
+// top edge
+const edgeTop = new THREE.Mesh(edgeGeoH, edgeMatL);
+edgeTop.position.set(0, 6.05, 0.01);
+scene.add(edgeTop);
+
+// bottom edge
+const edgeBot = new THREE.Mesh(edgeGeoH, edgeMatL);
+edgeBot.position.set(0, -0.02, 0.01);
+scene.add(edgeBot);
+
+// center line glow
+const centerGeo = new THREE.BoxGeometry(0.03, 6.1, 0.15);
+const centerL = new THREE.Mesh(centerGeo, edgeMatL);
+centerL.position.set(0, 3, 0.02);
+scene.add(centerL);
+
+// YNNOVIA TEXT on door
+const canvas2d = document.createElement('canvas');
+canvas2d.width = 512; canvas2d.height = 128;
+const ctx = canvas2d.getContext('2d');
+ctx.fillStyle = 'transparent';
+ctx.clearRect(0,0,512,128);
+ctx.font = 'bold 72px Arial';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+// glow
+ctx.shadowColor = '#3B82F6';
+ctx.shadowBlur = 30;
+ctx.fillStyle = '#ffffff';
+ctx.fillText('YNNOVIA', 256, 64);
+ctx.shadowBlur = 0;
+
+const tex = new THREE.CanvasTexture(canvas2d);
+const textGeo = new THREE.PlaneGeometry(3.2, 0.8);
+const textMat = new THREE.MeshBasicMaterial({map:tex, transparent:true, side:THREE.DoubleSide});
+const textMesh = new THREE.Mesh(textGeo, textMat);
+textMesh.position.set(0, 4.5, 0.12);
+scene.add(textMesh);
+
+// LIGHTS
+const ambientLight = new THREE.AmbientLight(0x111133, 2);
+scene.add(ambientLight);
+
+const blueLight = new THREE.PointLight(0x2563EB, 8, 15);
+blueLight.position.set(0, 3, 1.5);
+scene.add(blueLight);
+
+const blueFar = new THREE.PointLight(0x1d4ed8, 3, 30);
+blueFar.position.set(0, 5, 8);
+scene.add(blueFar);
+
+const rimL = new THREE.PointLight(0x3B82F6, 4, 10);
+rimL.position.set(-3, 3, 0);
+scene.add(rimL);
+
+const rimR = new THREE.PointLight(0x3B82F6, 4, 10);
+rimR.position.set(3, 3, 0);
+scene.add(rimR);
+
+// PARTICLES (smoke/fog near door)
+const smokeGeo = new THREE.BufferGeometry();
+const smokeCount = 200;
+const smokePos = new Float32Array(smokeCount * 3);
+for(let i=0;i<smokeCount;i++){
+  const angle = Math.random()*Math.PI*2;
+  const r = 1.5 + Math.random()*3;
+  smokePos[i*3] = Math.cos(angle)*r;
+  smokePos[i*3+1] = Math.random()*5;
+  smokePos[i*3+2] = (Math.random()-0.5)*2;
+}
+smokeGeo.setAttribute('position', new THREE.BufferAttribute(smokePos,3));
+const smokeMat = new THREE.PointsMaterial({
+  color:0x2040a0, size:0.35, transparent:true, opacity:0.15,
+  sizeAttenuation:true,
+});
+scene.add(new THREE.Points(smokeGeo, smokeMat));
+
+// ANIMATION STATE
+let phase = 0; // 0=approach, 1=slowdown, 2=doorOpen, 3=enter, 4=done
+let t = 0;
+let doorOpenAngle = 0;
+let introStarted = false;
+let introDone = false;
+
+// Camera target Z positions
+const startZ = 28;
+const slowZ = 5;
+const endZ = -1;
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+function easeOut(t){return 1-(1-t)*(1-t)*(1-t);}
+function easeIn(t){return t*t*t;}
+function easeInOut(t){return t<0.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1;}
+
+let clock = new THREE.Clock();
+let totalTime = 0;
+
+// Phase durations (seconds)
+const D_APPROACH = 2.2; // fast approach
+const D_SLOW = 1.0;     // slow down near door
+const D_OPEN = 1.4;     // door opens
+const D_ENTER = 0.8;    // enter through door
+
+function animate(){
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  totalTime += delta;
+
+  // Animate smoke
+  const smokePositions = smokeGeo.attributes.position.array;
+  for(let i=0;i<smokeCount;i++){
+    smokePositions[i*3+1] += delta*0.08;
+    smokePositions[i*3] += Math.sin(totalTime*0.5+i)*delta*0.02;
+    if(smokePositions[i*3+1] > 6) smokePositions[i*3+1] = 0;
+  }
+  smokeGeo.attributes.position.needsUpdate = true;
+
+  // Pulse blue light
+  blueLight.intensity = 8 + Math.sin(totalTime*2)*2;
+
+  // CAMERA MOVEMENT
+  if(totalTime < D_APPROACH){
+    // Fast approach
+    const p = totalTime / D_APPROACH;
+    const ep = easeOut(p);
+    camera.position.z = startZ - (startZ - slowZ) * ep;
+    camera.position.y = 1.2 + ep*0.3;
+  } else if(totalTime < D_APPROACH + D_SLOW){
+    // Slow down
+    const p = (totalTime - D_APPROACH) / D_SLOW;
+    const ep = easeOut(p);
+    camera.position.z = slowZ - (slowZ - 2.5) * ep;
+    camera.position.y = 1.5;
+  } else if(totalTime < D_APPROACH + D_SLOW + D_OPEN){
+    // Door opening
+    const p = (totalTime - D_APPROACH - D_SLOW) / D_OPEN;
+    const ep = easeInOut(p);
+    doorOpenAngle = ep * Math.PI * 0.55;
+
+    // Left door rotates left around its left edge
+    leftDoor.rotation.y = doorOpenAngle;
+    leftDoor.position.x = -1 - Math.sin(doorOpenAngle)*1;
+    leftDoor.position.z = Math.sin(doorOpenAngle)*1;
+
+    // Right door rotates right around its right edge
+    rightDoor.rotation.y = -doorOpenAngle;
+    rightDoor.position.x = 1 + Math.sin(doorOpenAngle)*1;
+    rightDoor.position.z = Math.sin(doorOpenAngle)*1;
+
+    camera.position.z = 2.5;
+
+    // Blue light through gap intensifies
+    blueLight.intensity = 8 + ep * 20;
+    blueLight.position.z = 1.5 - ep * 1;
+
+  } else if(totalTime < D_APPROACH + D_SLOW + D_OPEN + D_ENTER){
+    // Enter through door
+    const p = (totalTime - D_APPROACH - D_SLOW - D_OPEN) / D_ENTER;
+    const ep = easeIn(p);
+    camera.position.z = 2.5 - (2.5 - endZ)*ep;
+    camera.position.y = 1.5 + ep*0.5;
+    blueLight.intensity = 28 - ep*28;
+    // Fade out intro
+    if(p > 0.6){
+      const fadeP = (p - 0.6)/0.4;
+      document.getElementById('intro').style.opacity = 1 - fadeP;
+      if(fadeP > 0.5 && !introDone){
+        introDone = true;
+        showSite();
+      }
+    }
+  }
+
+  camera.lookAt(0, 2, 0);
+  renderer.render(scene, camera);
+}
+
+function showSite(){
+  document.getElementById('siteFrame').src = 'presentation.html';
+  document.getElementById('site').classList.add('visible');
+  setTimeout(()=>{
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('skip').style.display = 'none';
+  }, 1200);
+}
+
+function skipIntro(){
+  introDone = true;
+  showSite();
+  document.getElementById('intro').style.transition = 'opacity 0.6s';
+  document.getElementById('intro').style.opacity = '0';
+  setTimeout(()=>{document.getElementById('intro').style.display='none';},600);
+}
+
+animate();
+</script>
+</body>
+</html>
