@@ -53,8 +53,6 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .logo img { height: 28px; }
-
   .logo-text {
     font-size: 18px;
     font-weight: 600;
@@ -102,6 +100,13 @@
     border-top: 1px solid var(--border);
     font-size: 11px;
     color: var(--text3);
+  }
+
+  .sidebar-client {
+    font-size: 12px;
+    color: var(--text2);
+    font-weight: 500;
+    margin-bottom: 2px;
   }
 
   /* MAIN */
@@ -283,6 +288,21 @@
   .td-muted { color: var(--text2); }
   .td-mono { font-family: 'DM Mono', monospace; font-size: 12px; }
 
+  .sig-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background: rgba(179,138,255,0.1);
+    border: 1px solid rgba(179,138,255,0.25);
+    color: var(--purple);
+    font-size: 11px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
   /* BADGES */
   .badge {
     display: inline-flex;
@@ -382,6 +402,8 @@
     z-index: 200;
     align-items: center;
     justify-content: center;
+    overflow-y: auto;
+    padding: 40px 0;
   }
   .modal-overlay.open { display: flex; }
 
@@ -428,6 +450,27 @@
 
   .field input:focus, .field select:focus { border-color: var(--border2); }
   .field select option { background: var(--bg3); }
+
+  .signature-preview {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .signature-preview img {
+    max-width: 100%;
+    max-height: 120px;
+    filter: invert(1) brightness(0.85);
+    background: transparent;
+  }
+
+  .signature-empty {
+    font-size: 12px;
+    color: var(--text3);
+    padding: 20px 0;
+  }
 
   .modal-actions {
     display: flex;
@@ -522,6 +565,7 @@
     outline: none;
     text-align: center;
     letter-spacing: 3px;
+    text-transform: uppercase;
     margin-bottom: 12px;
     transition: border-color 0.15s;
   }
@@ -540,6 +584,7 @@
     transition: background 0.15s;
   }
   .login-btn:hover { background: var(--accent2); }
+  .login-btn:disabled { opacity: 0.5; cursor: default; }
   .login-error {
     font-size: 12px;
     color: var(--red);
@@ -635,10 +680,10 @@
 
 <div class="login-screen" id="login-screen">
   <div class="login-box">
-    <div class="login-logo">Ynnovia <span style="color:var(--accent);font-size:10px;vertical-align:middle;background:rgba(200,245,102,0.12);border:1px solid rgba(200,245,102,0.25);padding:2px 6px;border-radius:4px;letter-spacing:1px">PREMIUM</span></div>
-    <div class="login-sub">Dashboard de gestion</div>
-    <input class="login-input" type="password" id="login-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
-    <button class="login-btn" onclick="checkLogin()">Accéder au dashboard</button>
+    <div class="login-logo">Ynnovia <span style="color:var(--accent);font-size:10px;vertical-align:middle;background:rgba(200,245,102,0.12);border:1px solid rgba(200,245,102,0.25);padding:2px 6px;border-radius:4px;letter-spacing:1px">CLIENT</span></div>
+    <div class="login-sub">Entrez votre code d'accès personnel</div>
+    <input class="login-input" type="text" id="login-code" placeholder="CODE D'ACCÈS" maxlength="20" onkeydown="if(event.key==='Enter')checkLogin()">
+    <button class="login-btn" id="login-btn" onclick="checkLogin()">Accéder à mon espace</button>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
@@ -646,7 +691,7 @@
 <div class="sidebar" id="app" style="display:none">
   <div class="logo">
     <span class="logo-text">Ynnovia</span>
-    <span class="logo-badge">Premium</span>
+    <span class="logo-badge">Client</span>
   </div>
   <nav class="nav">
     <div class="nav-item active">
@@ -663,6 +708,7 @@
     </div>
   </nav>
   <div class="sidebar-footer">
+    <div class="sidebar-client" id="sidebar-client-name">—</div>
     Connecté à Google Sheets<br>
     <span id="last-sync" style="color: var(--text3);">Synchronisation...</span>
   </div>
@@ -799,6 +845,12 @@
         <option value="Annulé">Annulé</option>
       </select>
     </div>
+    <div class="field" id="field-signature" style="display:none">
+      <label>Signature du client</label>
+      <div class="signature-preview" id="signature-preview">
+        <div class="signature-empty">Aucune signature enregistrée</div>
+      </div>
+    </div>
     <input type="hidden" id="f-row">
     <input type="hidden" id="f-mode" value="edit">
     <div class="modal-actions">
@@ -812,7 +864,178 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
+/* ============================================================
+   YNNOVIA DASHBOARD — MULTI-CLIENT
+   ------------------------------------------------------------
+   Auth : le client entre un code d'accès personnel. Ce code est
+   vérifié via le webhook n8n API_LOGIN, qui va chercher dans
+   l'onglet "Clients" du Google Sheet la correspondance
+   code -> client_id (et vérifie que le statut est "actif").
+
+   Cela nécessite dans le Sheet "Clients" une colonne "code"
+   (le code que tu communiques à chaque client), en plus de
+   chat_id / client_id / nom_client / statut déjà en place.
+
+   Toutes les données (devis/factures) sont ensuite filtrées
+   par client_id, à la fois côté serveur (paramètre envoyé au
+   webhook dashboard-get) et côté client (sécurité en plus).
+   ============================================================ */
+
+const API_LOGIN     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-login';
+const API_GET        = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-get';
+const API_UPDATE     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-update';
+const API_CANCEL     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-cancel';
+const API_CREATE     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-create';
+const API_SIGNATURE  = 'https://n8n.srv1464223.hstgr.cloud/webhook/send-signature';
+const API_PAYMENT    = 'https://n8n.srv1464223.hstgr.cloud/webhook/send-payment';
+
+let allData = [];
+let currentFilter = 'tous';
 let caChart = null;
+let currentClient = null; // { client_id, nom_client }
+
+/* ---------------- AUTH ---------------- */
+
+async function checkLogin() {
+  const code = document.getElementById('login-code').value.trim();
+  const btn = document.getElementById('login-btn');
+  const errBox = document.getElementById('login-error');
+  errBox.textContent = '';
+
+  if (!code) {
+    errBox.textContent = 'Entre ton code d\'accès';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Vérification...';
+
+  try {
+    const res = await fetch(API_LOGIN, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ code })
+    });
+
+    if (!res.ok) throw new Error('bad status');
+    const data = await res.json();
+    const client = Array.isArray(data) ? data[0] : data;
+
+    if (!client || !client.client_id || (client.statut || '').trim().toLowerCase() !== 'actif') {
+      errBox.textContent = 'Code invalide ou compte inactif';
+      btn.disabled = false;
+      btn.textContent = 'Accéder à mon espace';
+      return;
+    }
+
+    currentClient = { client_id: client.client_id, nom_client: client.nom_client || '' };
+    sessionStorage.setItem('yn_client', JSON.stringify(currentClient));
+    enterApp();
+
+  } catch (e) {
+    errBox.textContent = 'Connexion impossible, réessaie';
+    btn.disabled = false;
+    btn.textContent = 'Accéder à mon espace';
+  }
+}
+
+function enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  if (window.innerWidth > 768) {
+    document.getElementById('app').style.display = 'flex';
+  }
+  document.querySelector('.main').style.display = 'block';
+  document.getElementById('sidebar-client-name').textContent = currentClient.nom_client || 'Mon espace';
+  loadData();
+}
+
+function logout() {
+  sessionStorage.removeItem('yn_client');
+  currentClient = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.querySelector('.main').style.display = 'none';
+  document.getElementById('login-code').value = '';
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').textContent = 'Accéder à mon espace';
+}
+
+// Session déjà active ?
+(function restoreSession() {
+  const saved = sessionStorage.getItem('yn_client');
+  if (saved) {
+    try {
+      currentClient = JSON.parse(saved);
+      if (currentClient && currentClient.client_id) {
+        enterApp();
+      }
+    } catch (e) { /* session corrompue, on ignore */ }
+  }
+})();
+
+/* ---------------- DATA ---------------- */
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function get(row, key) {
+  return row[key + ' '] || row[key] || '';
+}
+
+async function loadData() {
+  if (!currentClient) return;
+
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('data-table').style.display = 'none';
+  document.getElementById('empty').style.display = 'none';
+
+  try {
+    const url = API_GET + '?client_id=' + encodeURIComponent(currentClient.client_id);
+    const res = await fetch(url);
+    const data = await res.json();
+    const raw = Array.isArray(data) ? data : [data];
+
+    // Filtre de sécurité côté client, au cas où le webhook renverrait tout :
+    // ne garder que les lignes de ce client_id.
+    allData = raw.filter(row => {
+      const rowClientId = row['client_id'] || row['client_id '] || '';
+      return !rowClientId || rowClientId === currentClient.client_id;
+    });
+
+    updateStats();
+    renderChart(allData);
+    renderTable();
+
+    const now = new Date();
+    document.getElementById('last-sync').textContent = 'Sync ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('header-date').textContent = now.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  } catch(e) {
+    showToast('Erreur de connexion à n8n', 'error');
+    document.getElementById('loading').innerHTML = '<div style="color:var(--red)">Erreur de connexion. Vérifiez que le workflow est publié.</div>';
+  }
+}
+
+function updateStats() {
+  const total = allData.length;
+  const montant = allData.reduce((s, r) => s + (parseFloat(r['Montant HT']) || 0), 0);
+  const attente = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('attente')).length;
+  const accepte = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
+  const devisOnly = allData.filter(r => (r['Type '] || r['Type'] || '').toLowerCase() === 'devis');
+  const devisAccepte = devisOnly.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
+  const taux = devisOnly.length > 0 ? Math.round(devisAccepte / devisOnly.length * 100) : 0;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-montant').textContent = montant.toLocaleString('fr-FR') + ' €';
+  document.getElementById('stat-attente').textContent = attente;
+  document.getElementById('stat-taux').textContent = taux + '%';
+}
+
+/* ---------------- CHART ---------------- */
 
 function renderChart(data) {
   const months = {};
@@ -889,100 +1112,8 @@ function renderChart(data) {
     }
   });
 }
-const PASSWORD = 'ynnovia2026';
 
-function checkLogin() {
-  const pwd = document.getElementById('login-pwd').value;
-  if (pwd === PASSWORD) {
-    document.getElementById('login-screen').style.display = 'none';
-    if (window.innerWidth > 768) {
-      document.getElementById('app').style.display = 'flex';
-    }
-    document.querySelector('.main').style.display = 'block';
-    sessionStorage.setItem('yn_auth', '1');
-    loadData();
-  } else {
-    document.getElementById('login-error').textContent = 'Mot de passe incorrect';
-    document.getElementById('login-pwd').value = '';
-  }
-}
-
-function logout() {
-  sessionStorage.removeItem('yn_auth');
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.querySelector('.main').style.display = 'none';
-  document.getElementById('login-pwd').value = '';
-}
-
-if (sessionStorage.getItem('yn_auth') === '1') {
-  document.getElementById('login-screen').style.display = 'none';
-  if (window.innerWidth > 768) {
-    document.getElementById('app').style.display = 'flex';
-  }
-  document.querySelector('.main').style.display = 'block';
-  loadData();
-}
-
-const API_GET = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-get';
-const API_UPDATE = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-update';
-const API_CANCEL = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-cancel';
-const API_CREATE = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-create';
-const API_SIGNATURE = 'https://n8n.srv1464223.hstgr.cloud/webhook/send-signature';
-const API_PAYMENT = 'https://n8n.srv1464223.hstgr.cloud/webhook/send-payment';
-
-let allData = [];
-let currentFilter = 'tous';
-
-function showToast(msg, type = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + type;
-  setTimeout(() => t.className = 'toast', 3000);
-}
-
-async function loadData() {
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('data-table').style.display = 'none';
-  document.getElementById('empty').style.display = 'none';
-
-  try {
-    const res = await fetch(API_GET);
-    const data = await res.json();
-    allData = Array.isArray(data) ? data : [data];
-
-    updateStats();
-    renderChart(allData);
-    renderTable();
-
-    const now = new Date();
-    document.getElementById('last-sync').textContent = 'Sync ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-    document.getElementById('header-date').textContent = now.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-
-  } catch(e) {
-    showToast('Erreur de connexion à n8n', 'error');
-    document.getElementById('loading').innerHTML = '<div style="color:var(--red)">Erreur de connexion. Vérifiez que le workflow est publié.</div>';
-  }
-}
-
-function updateStats() {
-  const total = allData.length;
-  const montant = allData.reduce((s, r) => s + (parseFloat(r['Montant HT']) || 0), 0);
-  const attente = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('attente')).length;
-  const accepte = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
-  const devisOnly = allData.filter(r => (r['Type '] || r['Type'] || '').toLowerCase() === 'devis');
-  const devisAccepte = devisOnly.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
-  const taux = devisOnly.length > 0 ? Math.round(devisAccepte / devisOnly.length * 100) : 0;
-
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-montant').textContent = montant.toLocaleString('fr-FR') + ' €';
-  document.getElementById('stat-attente').textContent = attente;
-  document.getElementById('stat-taux').textContent = taux + '%';
-}
-
-function get(row, key) {
-  return row[key + ' '] || row[key] || '';
-}
+/* ---------------- TABLE ---------------- */
 
 function renderTable() {
   const search = document.getElementById('search-input').value.toLowerCase();
@@ -1026,6 +1157,7 @@ function renderTable() {
     const date = get(row, 'Date');
     const numero = get(row, 'Numéro') || '—';
     const rowNum = row['row_number'];
+    const signature = get(row, 'Signature');
 
     const statutLower = statut.toLowerCase();
     let badgeClass = 'badge-attente';
@@ -1037,6 +1169,7 @@ function renderTable() {
     else if (statutLower.includes('annul')) { badgeClass = 'badge-annule'; badgeLabel = 'Annulé'; }
 
     const typeClass = type.toLowerCase() === 'facture' ? 'badge-type-facture' : 'badge-type-devis';
+    const sigIndicator = signature ? '<span class="sig-indicator" title="Signature enregistrée">✍</span>' : '';
 
     return `<tr onclick="openEdit(${rowNum})">
       <td><span class="${typeClass}">${type}</span></td>
@@ -1048,7 +1181,7 @@ function renderTable() {
       <td class="td-muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${prestation}</td>
       <td style="font-family:'DM Mono',monospace;font-weight:500">${montant.toLocaleString('fr-FR')} €</td>
       <td class="td-muted">${date}</td>
-      <td><span class="badge ${badgeClass}"><span class="badge-dot"></span>${badgeLabel}</span></td>
+      <td><span class="badge ${badgeClass}"><span class="badge-dot"></span>${badgeLabel}</span>${sigIndicator}</td>
       <td onclick="event.stopPropagation()" style="white-space:nowrap">
         <button class="action-btn" onclick="openEdit(${rowNum})">✏️</button>
         <button class="action-btn" onclick="sendSignature(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--accent);border-color:rgba(200,245,102,0.3)" title="Envoyer pour signature">✍️</button>
@@ -1067,6 +1200,8 @@ function setFilter(f, btn) {
   renderTable();
 }
 
+/* ---------------- MODAL ---------------- */
+
 function openEdit(rowNum) {
   const row = allData.find(r => r.row_number === rowNum);
   if (!row) return;
@@ -1083,6 +1218,18 @@ function openEdit(rowNum) {
   document.getElementById('field-type').style.display = 'none';
   document.getElementById('field-statut').style.display = 'block';
   document.getElementById('modal-save-btn').textContent = 'Enregistrer';
+
+  // Signature
+  const signature = get(row, 'Signature');
+  const sigField = document.getElementById('field-signature');
+  const sigPreview = document.getElementById('signature-preview');
+  sigField.style.display = 'block';
+  if (signature && signature.startsWith('data:image')) {
+    sigPreview.innerHTML = `<img src="${signature}" alt="Signature de ${get(row, 'Nom Client')}">`;
+  } else {
+    sigPreview.innerHTML = '<div class="signature-empty">Aucune signature enregistrée</div>';
+  }
+
   document.getElementById('modal').classList.add('open');
 }
 
@@ -1098,8 +1245,15 @@ function openModal() {
   document.getElementById('f-mode').value = 'create';
   document.getElementById('field-type').style.display = 'block';
   document.getElementById('field-statut').style.display = 'none';
+  document.getElementById('field-signature').style.display = 'none';
   document.getElementById('modal-save-btn').textContent = 'Créer';
   document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
 }
 
 async function saveForm() {
@@ -1118,6 +1272,7 @@ async function createDoc() {
     'Email Client': document.getElementById('f-email').value,
     'Prestation': document.getElementById('f-prestation').value,
     'Montant HT': parseFloat(document.getElementById('f-montant').value) || 0,
+    'client_id': currentClient.client_id,
   };
 
   if (!payload['Nom Client'] || !payload['Prestation'] || !payload['Montant HT']) {
@@ -1139,17 +1294,12 @@ async function createDoc() {
   }
 }
 
-function closeModal(e) {
-  if (e.target === document.getElementById('modal')) {
-    document.getElementById('modal').classList.remove('open');
-  }
-}
-
 async function saveEdit() {
   const rowNum = document.getElementById('f-row').value;
   if (!rowNum) return;
   const payload = {
     row_number: parseInt(rowNum),
+    client_id: currentClient.client_id,
     'Nom Client': document.getElementById('f-client').value,
     'Email Client': document.getElementById('f-email').value,
     'Prestation': document.getElementById('f-prestation').value,
@@ -1181,6 +1331,8 @@ async function saveEdit() {
   }
 }
 
+/* ---------------- ROW ACTIONS ---------------- */
+
 // Mise à jour locale immédiate sans rechargement visible
 function updateLocalRow(rowNum, changes) {
   const idx = allData.findIndex(r => r.row_number === rowNum);
@@ -1192,10 +1344,15 @@ function updateLocalRow(rowNum, changes) {
   }
   // Rechargement silencieux en arrière-plan après 3s
   setTimeout(() => {
-    fetch(API_GET)
+    if (!currentClient) return;
+    fetch(API_GET + '?client_id=' + encodeURIComponent(currentClient.client_id))
       .then(r => r.json())
       .then(data => {
-        allData = Array.isArray(data) ? data : [data];
+        const raw = Array.isArray(data) ? data : [data];
+        allData = raw.filter(row => {
+          const rowClientId = row['client_id'] || row['client_id '] || '';
+          return !rowClientId || rowClientId === currentClient.client_id;
+        });
         renderTable();
         updateStats();
         renderChart(allData);
@@ -1285,8 +1442,6 @@ async function sendSignature(rowNum, client, email, prestation, montant, numero)
     showToast('Erreur lors de l\'envoi', 'error');
   }
 }
-
-loadData();
 </script>
 </body>
 </html>
