@@ -158,6 +158,8 @@
     font-weight: 600;
   }
   .btn-primary:hover { background: var(--accent2); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  .btn:focus-visible, .mic-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* CONTENT */
   .content { padding: 28px 32px; }
@@ -414,6 +416,7 @@
     width: 480px;
     max-width: 90vw;
     padding: 28px;
+    margin: auto;
   }
 
   .modal-title {
@@ -435,7 +438,7 @@
     font-weight: 500;
   }
 
-  .field input, .field select {
+  .field input, .field select, .field textarea {
     width: 100%;
     background: var(--bg3);
     border: 1px solid var(--border);
@@ -448,8 +451,11 @@
     transition: border-color 0.15s;
   }
 
-  .field input:focus, .field select:focus { border-color: var(--border2); }
+  .field textarea { resize: vertical; line-height: 1.5; }
+
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--border2); }
   .field select option { background: var(--bg3); }
+  .field .missing { border-color: rgba(255,140,66,0.5); }
 
   .signature-preview {
     background: var(--bg3);
@@ -477,6 +483,76 @@
     gap: 8px;
     justify-content: flex-end;
     margin-top: 24px;
+  }
+
+  /* NOUVEAU DEVIS */
+  .dictee-zone {
+    position: relative;
+  }
+
+  .dictee-zone textarea {
+    min-height: 150px;
+    font-size: 14px;
+    padding: 12px 12px 56px;
+  }
+
+  .mic-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(200,245,102,0.3);
+    background: rgba(200,245,102,0.08);
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mic-btn:hover { background: rgba(200,245,102,0.15); }
+
+  .mic-btn.listening {
+    background: rgba(255,82,82,0.12);
+    border-color: rgba(255,82,82,0.4);
+    color: var(--red);
+  }
+
+  .mic-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .mic-btn.listening .mic-dot { animation: pulse 1s ease-in-out infinite; }
+
+  @keyframes pulse { 50% { opacity: 0.3; } }
+
+  .dictee-hint {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  .draft-note {
+    font-size: 12px;
+    color: var(--text2);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
 
   /* LOADING */
@@ -519,6 +595,7 @@
     opacity: 0;
     transform: translateY(8px);
     transition: all 0.2s;
+    pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.success { border-color: rgba(200,245,102,0.3); color: var(--accent); }
@@ -540,6 +617,7 @@
     border-radius: 16px;
     padding: 40px;
     width: 360px;
+    max-width: 92vw;
     text-align: center;
   }
   .login-logo {
@@ -592,16 +670,8 @@
     min-height: 18px;
   }
 
-  /* TELEGRAM TIP */
-  .telegram-tip {
-    background: rgba(74,158,255,0.08);
-    border: 1px solid rgba(74,158,255,0.2);
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 12px;
-    color: var(--blue);
-    margin-bottom: 20px;
-    text-align: center;
+  @media (prefers-reduced-motion: reduce) {
+    .mic-btn.listening .mic-dot, .spinner { animation: none; }
   }
 
   /* MOBILE RESPONSIVE */
@@ -613,6 +683,7 @@
     .header-title { font-size: 14px; }
     .header-sub { display: none; }
     .btn { padding: 6px 10px; font-size: 12px; }
+    .btn-refresh { display: none; }
 
     .content { padding: 12px; }
 
@@ -627,7 +698,7 @@
     .stat-label { font-size: 10px; }
 
     /* Cache graphique sur mobile */
-    .content > div:nth-child(2) { display: none; }
+    .chart-card { display: none; }
 
     .filters { flex-wrap: wrap; gap: 6px; }
     .filter-btn { font-size: 11px; padding: 5px 10px; }
@@ -673,6 +744,9 @@
     }
 
     .modal { padding: 20px; width: 95vw; }
+    .modal-overlay { padding: 12px 0; align-items: flex-start; }
+    .field-row { grid-template-columns: 1fr; gap: 0; }
+    .field input, .field select, .field textarea { font-size: 16px; }
   }
 </style>
 </head>
@@ -682,7 +756,7 @@
   <div class="login-box">
     <div class="login-logo">Ynnovia <span style="color:var(--accent);font-size:10px;vertical-align:middle;background:rgba(200,245,102,0.12);border:1px solid rgba(200,245,102,0.25);padding:2px 6px;border-radius:4px;letter-spacing:1px">CLIENT</span></div>
     <div class="login-sub">Entrez votre code d'accès personnel</div>
-    <input class="login-input" type="text" id="login-code" placeholder="CODE D'ACCÈS" maxlength="20" onkeydown="if(event.key==='Enter')checkLogin()">
+    <input class="login-input" type="text" id="login-code" placeholder="CODE D'ACCÈS" maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter')checkLogin()">
     <button class="login-btn" id="login-btn" onclick="checkLogin()">Accéder à mon espace</button>
     <div class="login-error" id="login-error"></div>
   </div>
@@ -697,14 +771,14 @@
     <div class="nav-item active">
       <span class="nav-icon">▦</span> Dashboard
     </div>
+    <div class="nav-item" onclick="openDevis()">
+      <span class="nav-icon">＋</span> Nouveau devis
+    </div>
     <div class="nav-item">
       <span class="nav-icon">◎</span> Devis
     </div>
     <div class="nav-item">
       <span class="nav-icon">◈</span> Factures
-    </div>
-    <div class="nav-item">
-      <span class="nav-icon">◷</span> Historique
     </div>
   </nav>
   <div class="sidebar-footer">
@@ -721,7 +795,8 @@
       <div class="header-sub" id="header-date">Chargement...</div>
     </div>
     <div class="header-actions">
-      <button class="btn btn-ghost" onclick="loadData()">↻ Actualiser</button>
+      <button class="btn btn-primary" onclick="openDevis()">+ Nouveau devis</button>
+      <button class="btn btn-ghost btn-refresh" onclick="loadData()">↻ Actualiser</button>
       <button class="btn btn-ghost" onclick="logout()" style="color:var(--red);border-color:rgba(255,82,82,0.3)">Déconnexion</button>
     </div>
   </div>
@@ -752,7 +827,7 @@
     </div>
 
     <!-- GRAPHIQUE CA PAR MOIS -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;min-height:200px">
+    <div class="chart-card" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;min-height:200px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div>
           <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;font-weight:500">Chiffre d'affaires</div>
@@ -763,11 +838,6 @@
       <div style="position:relative;height:180px">
         <canvas id="ca-chart"></canvas>
       </div>
-    </div>
-
-    <!-- TELEGRAM TIP -->
-    <div class="telegram-tip">
-      ✦ Pour créer un devis ou une facture avec PDF, utilisez le bot Telegram
     </div>
 
     <!-- FILTERS -->
@@ -802,16 +872,81 @@
         <tbody id="table-body"></tbody>
       </table>
       <div class="empty" id="empty" style="display:none">
-        Aucun résultat trouvé
+        Aucun document pour l'instant. Cliquez sur « Nouveau devis » pour créer le premier.
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL EDIT / CREATE -->
+<!-- MODAL NOUVEAU DEVIS -->
+<div class="modal-overlay" id="devis-modal" onclick="if(event.target===this)closeDevis()">
+  <div class="modal">
+
+    <!-- Étape 1 : dicter -->
+    <div id="devis-step1">
+      <div class="modal-title">Nouveau devis</div>
+      <div class="field">
+        <label for="d-texte">Décrivez le devis</label>
+        <div class="dictee-zone">
+          <textarea id="d-texte" placeholder="Ex : Devis pour Mme Durand, 12 rue des Lilas à Poissy, remplacement chauffe-eau 200 L avec pose, 850 euros HT. Son mail : durand@gmail.com"></textarea>
+          <button type="button" class="mic-btn" id="mic-btn" onclick="toggleDictee()">
+            <span class="mic-dot"></span><span id="mic-label">Dicter</span>
+          </button>
+        </div>
+        <div class="dictee-hint" id="dictee-hint">Client, adresse, email, travaux et montant. Vous pourrez tout vérifier avant l'envoi.</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeDevis()">Annuler</button>
+        <button class="btn btn-primary" id="btn-preparer" onclick="preparerDevis()">Préparer le devis</button>
+      </div>
+    </div>
+
+    <!-- Étape 2 : vérifier et envoyer -->
+    <div id="devis-step2" style="display:none">
+      <div class="modal-title">Vérifiez avant l'envoi</div>
+      <div class="draft-note" id="draft-note">Les champs en orange sont vides : complétez-les avant d'envoyer.</div>
+      <div class="field-row">
+        <div class="field">
+          <label for="d-type">Type</label>
+          <select id="d-type">
+            <option value="devis">Devis</option>
+            <option value="facture">Facture</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="d-montant">Montant HT (€)</label>
+          <input type="number" id="d-montant" min="0" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+      <div class="field">
+        <label for="d-client">Client</label>
+        <input type="text" id="d-client">
+      </div>
+      <div class="field">
+        <label for="d-email">Email du client</label>
+        <input type="email" id="d-email" inputmode="email" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="d-adresse">Adresse</label>
+        <input type="text" id="d-adresse">
+      </div>
+      <div class="field">
+        <label for="d-prestation">Prestation</label>
+        <textarea id="d-prestation" rows="4"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="retourEtape1()">Retour</button>
+        <button class="btn btn-primary" id="btn-envoyer" onclick="envoyerDevis()">Envoyer au client</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL EDIT -->
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
   <div class="modal">
-    <div class="modal-title" id="modal-title">Nouveau document</div>
+    <div class="modal-title" id="modal-title">Modifier</div>
     <div class="field" id="field-type">
       <label>Type</label>
       <select id="f-type">
@@ -867,43 +1002,45 @@
 /* ============================================================
    YNNOVIA DASHBOARD — MULTI-CLIENT
    ------------------------------------------------------------
-   Auth : le client entre un code d'accès personnel. Ce code est
-   vérifié via le webhook n8n API_LOGIN, qui va chercher dans
-   l'onglet "Clients" du Google Sheet la correspondance
-   code -> client_id (et vérifie que le statut est "actif").
+   Login : webhook "ynnovia-login" (workflow "YNNOVIA Devis v2 - 1 Login").
+   Il vérifie le code dans l'onglet Client et renvoie un jeton de
+   session (token) + client_id.
 
-   Cela nécessite dans le Sheet "Clients" une colonne "code"
-   (le code que tu communiques à chaque client), en plus de
-   chat_id / client_id / nom_client / statut déjà en place.
-
-   Toutes les données (devis/factures) sont ensuite filtrées
-   par client_id, à la fois côté serveur (paramètre envoyé au
-   webhook dashboard-get) et côté client (sécurité en plus).
+   Création de devis :
+   1. "devis-preparer" : texte dicté + token -> brouillon rempli par l'IA
+   2. "devis-envoyer"  : devis vérifié + token -> PDF au nom de
+      l'artisan, envoi au client, ajout dans l'Historique
+   Ces deux webhooks vérifient le token côté n8n.
    ============================================================ */
 
-const API_LOGIN     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-login';
-const API_GET        = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-get';
-const API_UPDATE     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-update';
-const API_CANCEL     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-cancel';
-const API_CREATE     = 'https://n8n.srv1464223.hstgr.cloud/webhook/dashboard-create';
-const API_SIGNATURE  = 'https://n8n.srv1464223.hstgr.cloud/webhook/send-signature';
-const API_PAYMENT    = 'https://n8n.srv1464223.hstgr.cloud/webhook/send-payment';
+const N8N = 'https://n8n.srv1464223.hstgr.cloud/webhook/';
+
+const API_LOGIN      = N8N + 'ynnovia-login';
+const API_PREPARER   = N8N + 'devis-preparer';
+const API_ENVOYER    = N8N + 'devis-envoyer';
+
+const API_GET        = N8N + 'dashboard-get';
+const API_UPDATE     = N8N + 'dashboard-update';
+const API_CANCEL     = N8N + 'dashboard-cancel';
+const API_CREATE     = N8N + 'dashboard-create';
+const API_SIGNATURE  = N8N + 'send-signature';
+const API_PAYMENT    = N8N + 'send-payment';
 
 let allData = [];
 let currentFilter = 'tous';
 let caChart = null;
-let currentClient = null; // { client_id, nom_client }
+let currentClient = null; // { client_id, nom_client, entreprise, token }
 
 /* ---------------- AUTH ---------------- */
 
 async function checkLogin() {
-  const code = document.getElementById('login-code').value.trim();
+  const code = document.getElementById('login-code').value.trim().toUpperCase();
   const btn = document.getElementById('login-btn');
   const errBox = document.getElementById('login-error');
   errBox.textContent = '';
 
   if (!code) {
-    errBox.textContent = 'Entre ton code d\'accès';
+    errBox.textContent = 'Entrez votre code d\'accès';
     return;
   }
 
@@ -917,23 +1054,26 @@ async function checkLogin() {
       body: JSON.stringify({ code })
     });
 
-    if (!res.ok) throw new Error('bad status');
-    const data = await res.json();
-    const client = Array.isArray(data) ? data[0] : data;
+    const data = await res.json().catch(() => ({}));
 
-    if (!client || !client.client_id || (client.statut || '').trim().toLowerCase() !== 'actif') {
+    if (!res.ok || !data.ok || !data.token || !data.client_id) {
       errBox.textContent = 'Code invalide ou compte inactif';
       btn.disabled = false;
       btn.textContent = 'Accéder à mon espace';
       return;
     }
 
-    currentClient = { client_id: client.client_id, nom_client: client.nom_client || '' };
+    currentClient = {
+      client_id: data.client_id,
+      nom_client: data.nom_client || '',
+      entreprise: data.entreprise || '',
+      token: data.token
+    };
     sessionStorage.setItem('yn_client', JSON.stringify(currentClient));
     enterApp();
 
   } catch (e) {
-    errBox.textContent = 'Connexion impossible, réessaie';
+    errBox.textContent = 'Connexion impossible, vérifiez votre réseau et réessayez';
     btn.disabled = false;
     btn.textContent = 'Accéder à mon espace';
   }
@@ -945,7 +1085,7 @@ function enterApp() {
     document.getElementById('app').style.display = 'flex';
   }
   document.querySelector('.main').style.display = 'block';
-  document.getElementById('sidebar-client-name').textContent = currentClient.nom_client || 'Mon espace';
+  document.getElementById('sidebar-client-name').textContent = currentClient.entreprise || currentClient.nom_client || 'Mon espace';
   loadData();
 }
 
@@ -960,18 +1100,208 @@ function logout() {
   document.getElementById('login-btn').textContent = 'Accéder à mon espace';
 }
 
-// Session déjà active ?
+function sessionExpiree() {
+  showToast('Session expirée, reconnectez-vous', 'error');
+  closeDevis();
+  logout();
+}
+
+// Session déjà active ? (les anciennes sessions sans token sont ignorées)
 (function restoreSession() {
   const saved = sessionStorage.getItem('yn_client');
   if (saved) {
     try {
-      currentClient = JSON.parse(saved);
-      if (currentClient && currentClient.client_id) {
+      const s = JSON.parse(saved);
+      if (s && s.client_id && s.token) {
+        currentClient = s;
         enterApp();
+      } else {
+        sessionStorage.removeItem('yn_client');
       }
-    } catch (e) { /* session corrompue, on ignore */ }
+    } catch (e) { sessionStorage.removeItem('yn_client'); }
   }
 })();
+
+/* ---------------- NOUVEAU DEVIS ---------------- */
+
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let dicteeActive = false;
+
+if (!SpeechRec) {
+  document.getElementById('mic-btn').style.display = 'none';
+  document.getElementById('dictee-hint').textContent =
+    'Astuce : utilisez le micro de votre clavier pour dicter. Indiquez le client, l\'adresse, l\'email, les travaux et le montant.';
+  document.getElementById('d-texte').style.paddingBottom = '12px';
+}
+
+function toggleDictee() {
+  if (!SpeechRec) return;
+  if (dicteeActive) { stopDictee(); return; }
+
+  const zone = document.getElementById('d-texte');
+  const base = zone.value.trim();
+  recognition = new SpeechRec();
+  recognition.lang = 'fr-FR';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onresult = (event) => {
+    let texte = '';
+    for (let i = 0; i < event.results.length; i++) {
+      texte += event.results[i][0].transcript;
+    }
+    zone.value = (base ? base + ' ' : '') + texte.trim();
+  };
+  recognition.onerror = (e) => {
+    if (e.error === 'not-allowed') showToast('Autorisez le micro dans votre navigateur', 'error');
+    stopDictee();
+  };
+  recognition.onend = () => { if (dicteeActive) stopDictee(); };
+
+  recognition.start();
+  dicteeActive = true;
+  document.getElementById('mic-btn').classList.add('listening');
+  document.getElementById('mic-label').textContent = 'Arrêter';
+}
+
+function stopDictee() {
+  dicteeActive = false;
+  if (recognition) { try { recognition.stop(); } catch (e) {} }
+  document.getElementById('mic-btn').classList.remove('listening');
+  document.getElementById('mic-label').textContent = 'Dicter';
+}
+
+function openDevis() {
+  document.getElementById('d-texte').value = '';
+  document.getElementById('devis-step1').style.display = 'block';
+  document.getElementById('devis-step2').style.display = 'none';
+  resetBtn('btn-preparer', 'Préparer le devis');
+  resetBtn('btn-envoyer', 'Envoyer au client');
+  document.getElementById('devis-modal').classList.add('open');
+  setTimeout(() => document.getElementById('d-texte').focus(), 50);
+}
+
+function closeDevis() {
+  stopDictee();
+  document.getElementById('devis-modal').classList.remove('open');
+}
+
+function retourEtape1() {
+  document.getElementById('devis-step2').style.display = 'none';
+  document.getElementById('devis-step1').style.display = 'block';
+  resetBtn('btn-preparer', 'Préparer le devis');
+}
+
+function resetBtn(id, label) {
+  const b = document.getElementById(id);
+  b.disabled = false;
+  b.textContent = label;
+}
+
+async function preparerDevis() {
+  stopDictee();
+  const texte = document.getElementById('d-texte').value.trim();
+  if (texte.length < 10) {
+    showToast('Décrivez le devis : client, travaux et montant', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-preparer');
+  btn.disabled = true;
+  btn.textContent = 'Préparation...';
+
+  try {
+    const res = await fetch(API_PREPARER, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ token: currentClient.token, texte })
+    });
+    if (res.status === 401) { sessionExpiree(); return; }
+    const data = await res.json();
+    if (!data.ok || !data.brouillon) throw new Error('brouillon vide');
+
+    remplirBrouillon(data.brouillon);
+    document.getElementById('devis-step1').style.display = 'none';
+    document.getElementById('devis-step2').style.display = 'block';
+  } catch (e) {
+    showToast('Impossible de préparer le devis, réessayez', 'error');
+    resetBtn('btn-preparer', 'Préparer le devis');
+  }
+}
+
+function remplirBrouillon(b) {
+  document.getElementById('d-type').value = (b.type === 'facture') ? 'facture' : 'devis';
+  document.getElementById('d-client').value = b.client_nom || '';
+  document.getElementById('d-email').value = (b.client_email || '').replace(/\s/g, '').toLowerCase();
+  document.getElementById('d-adresse').value = b.client_adresse || '';
+  document.getElementById('d-prestation').value = b.prestation || '';
+  document.getElementById('d-montant').value = Number(b.montant_ht) > 0 ? b.montant_ht : '';
+  marquerChampsVides();
+}
+
+function marquerChampsVides() {
+  let vides = 0;
+  ['d-client', 'd-email', 'd-adresse', 'd-prestation', 'd-montant'].forEach(id => {
+    const el = document.getElementById(id);
+    const vide = !String(el.value).trim();
+    el.classList.toggle('missing', vide);
+    if (vide) vides++;
+  });
+  document.getElementById('draft-note').textContent = vides
+    ? 'Les champs en orange sont vides : complétez-les avant d\'envoyer.'
+    : 'Tout est rempli. Relisez, corrigez si besoin, puis envoyez.';
+}
+
+['d-client', 'd-email', 'd-adresse', 'd-prestation', 'd-montant'].forEach(id => {
+  document.getElementById(id).addEventListener('input', marquerChampsVides);
+});
+
+async function envoyerDevis() {
+  const devis = {
+    type: document.getElementById('d-type').value,
+    client_nom: document.getElementById('d-client').value.trim(),
+    client_email: document.getElementById('d-email').value.trim().toLowerCase(),
+    client_adresse: document.getElementById('d-adresse').value.trim(),
+    prestation: document.getElementById('d-prestation').value.trim(),
+    montant_ht: parseFloat(String(document.getElementById('d-montant').value).replace(',', '.')) || 0
+  };
+
+  if (!devis.client_nom || !devis.prestation) {
+    showToast('Indiquez le client et la prestation', 'error'); return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(devis.client_email)) {
+    showToast('L\'email du client n\'est pas valide', 'error'); return;
+  }
+  if (devis.montant_ht <= 0) {
+    showToast('Indiquez un montant HT supérieur à 0', 'error'); return;
+  }
+
+  const label = devis.type === 'facture' ? 'la facture' : 'le devis';
+  if (!confirm(`Envoyer ${label} de ${devis.montant_ht.toLocaleString('fr-FR')} € HT à ${devis.client_email} ?`)) return;
+
+  const btn = document.getElementById('btn-envoyer');
+  btn.disabled = true;
+  btn.textContent = 'Envoi...';
+
+  try {
+    const res = await fetch(API_ENVOYER, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ token: currentClient.token, devis })
+    });
+    if (res.status === 401) { sessionExpiree(); return; }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.erreur || 'envoi refusé');
+
+    closeDevis();
+    showToast((devis.type === 'facture' ? 'Facture ' : 'Devis ') + data.numero + ' envoyé à ' + devis.client_nom, 'success');
+    loadData();
+  } catch (e) {
+    showToast('Envoi impossible : ' + e.message, 'error');
+    resetBtn('btn-envoyer', 'Envoyer au client');
+  }
+}
 
 /* ---------------- DATA ---------------- */
 
@@ -979,7 +1309,7 @@ function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show ' + type;
-  setTimeout(() => t.className = 'toast', 3000);
+  setTimeout(() => t.className = 'toast', 3500);
 }
 
 function get(row, key) {
@@ -999,11 +1329,9 @@ async function loadData() {
     const data = await res.json();
     const raw = Array.isArray(data) ? data : [data];
 
-    // Filtre de sécurité côté client, au cas où le webhook renverrait tout :
-    // ne garder que les lignes de ce client_id.
     allData = raw.filter(row => {
       const rowClientId = row['client_id'] || row['client_id '] || '';
-      return !rowClientId || rowClientId === currentClient.client_id;
+      return rowClientId && rowClientId === currentClient.client_id;
     });
 
     updateStats();
@@ -1016,7 +1344,7 @@ async function loadData() {
 
   } catch(e) {
     showToast('Erreur de connexion à n8n', 'error');
-    document.getElementById('loading').innerHTML = '<div style="color:var(--red)">Erreur de connexion. Vérifiez que le workflow est publié.</div>';
+    document.getElementById('loading').innerHTML = '<div style="color:var(--red)">Chargement impossible. Cliquez sur Actualiser pour réessayer.</div>';
   }
 }
 
@@ -1024,9 +1352,11 @@ function updateStats() {
   const total = allData.length;
   const montant = allData.reduce((s, r) => s + (parseFloat(r['Montant HT']) || 0), 0);
   const attente = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('attente')).length;
-  const accepte = allData.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
   const devisOnly = allData.filter(r => (r['Type '] || r['Type'] || '').toLowerCase() === 'devis');
-  const devisAccepte = devisOnly.filter(r => (r['Statut '] || r['Statut'] || '').toLowerCase().includes('accept')).length;
+  const devisAccepte = devisOnly.filter(r => {
+    const s = (r['Statut '] || r['Statut'] || '').toLowerCase();
+    return s.includes('accept') || s.includes('sign') || s.includes('pay');
+  }).length;
   const taux = devisOnly.length > 0 ? Math.round(devisAccepte / devisOnly.length * 100) : 0;
 
   document.getElementById('stat-total').textContent = total;
@@ -1043,7 +1373,7 @@ function renderChart(data) {
 
   data.forEach(row => {
     const dateStr = row['Date '] || row['Date'] || '';
-    const parts = dateStr.split('/');
+    const parts = String(dateStr).split('/');
     if (parts.length !== 3) return;
     const mois = parseInt(parts[1]) - 1;
     const annee = parts[2];
@@ -1115,14 +1445,18 @@ function renderChart(data) {
 
 /* ---------------- TABLE ---------------- */
 
+function esc(v) {
+  return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function renderTable() {
   const search = document.getElementById('search-input').value.toLowerCase();
 
   let filtered = allData.filter(row => {
-    const statut = get(row, 'Statut').toLowerCase();
-    const type = get(row, 'Type').toLowerCase();
-    const client = get(row, 'Nom Client').toLowerCase();
-    const prestation = get(row, 'Prestation').toLowerCase();
+    const statut = String(get(row, 'Statut')).toLowerCase();
+    const type = String(get(row, 'Type')).toLowerCase();
+    const client = String(get(row, 'Nom Client')).toLowerCase();
+    const prestation = String(get(row, 'Prestation')).toLowerCase();
 
     const matchFilter = currentFilter === 'tous' ||
       (currentFilter === 'En attente' && statut.includes('attente')) ||
@@ -1148,46 +1482,47 @@ function renderTable() {
 
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = filtered.map(row => {
-    const statut = get(row, 'Statut');
-    const type = get(row, 'Type');
+    const statut = String(get(row, 'Statut'));
+    const type = String(get(row, 'Type'));
     const client = get(row, 'Nom Client');
     const email = get(row, 'Email Client');
     const prestation = get(row, 'Prestation');
     const montant = parseFloat(get(row, 'Montant HT')) || 0;
     const date = get(row, 'Date');
     const numero = get(row, 'Numéro') || '—';
-    const rowNum = row['row_number'];
+    const rowNum = Number(row['row_number']);
     const signature = get(row, 'Signature');
 
     const statutLower = statut.toLowerCase();
     let badgeClass = 'badge-attente';
     let badgeLabel = 'En attente';
     if (statutLower.includes('pay')) { badgeClass = 'badge-paye'; badgeLabel = 'Payé'; }
+    else if (statutLower.includes('attente signature')) { badgeClass = 'badge-attente'; badgeLabel = 'En attente signature'; }
     else if (statutLower.includes('accept')) { badgeClass = 'badge-accepte'; badgeLabel = 'Accepté'; }
     else if (statutLower.includes('sign')) { badgeClass = 'badge-signe'; badgeLabel = 'Signé'; }
-    else if (statutLower.includes('attente signature')) { badgeClass = 'badge-attente'; badgeLabel = 'En attente signature'; }
     else if (statutLower.includes('annul')) { badgeClass = 'badge-annule'; badgeLabel = 'Annulé'; }
+    else if (statutLower.includes('envoy')) { badgeClass = 'badge-attente'; badgeLabel = 'Envoyée'; }
 
     const typeClass = type.toLowerCase() === 'facture' ? 'badge-type-facture' : 'badge-type-devis';
     const sigIndicator = signature ? '<span class="sig-indicator" title="Signature enregistrée">✍</span>' : '';
 
     return `<tr onclick="openEdit(${rowNum})">
-      <td><span class="${typeClass}">${type}</span></td>
-      <td class="td-mono td-muted">${numero}</td>
+      <td><span class="${typeClass}">${esc(type)}</span></td>
+      <td class="td-mono td-muted">${esc(numero)}</td>
       <td>
-        <div style="font-weight:500">${client}</div>
-        <div style="font-size:11px;color:var(--text3)">${email}</div>
+        <div style="font-weight:500">${esc(client)}</div>
+        <div style="font-size:11px;color:var(--text3)">${esc(email)}</div>
       </td>
-      <td class="td-muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${prestation}</td>
+      <td class="td-muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(prestation)}</td>
       <td style="font-family:'DM Mono',monospace;font-weight:500">${montant.toLocaleString('fr-FR')} €</td>
-      <td class="td-muted">${date}</td>
+      <td class="td-muted">${esc(date)}</td>
       <td><span class="badge ${badgeClass}"><span class="badge-dot"></span>${badgeLabel}</span>${sigIndicator}</td>
       <td onclick="event.stopPropagation()" style="white-space:nowrap">
         <button class="action-btn" onclick="openEdit(${rowNum})">✏️</button>
-        <button class="action-btn" onclick="sendSignature(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--accent);border-color:rgba(200,245,102,0.3)" title="Envoyer pour signature">✍️</button>
-        <button class="action-btn" onclick="sendPayment(${rowNum}, '${client}', '${email}', '${prestation}', ${montant}, '${numero}')" style="color:var(--blue);border-color:rgba(74,158,255,0.3)" title="Envoyer lien paiement">💳</button>
-        <button class="action-btn" onclick="markPaid(${rowNum}, '${client}')" style="color:var(--green);border-color:rgba(82,255,140,0.3)" title="Marquer comme payé">✓</button>
-        <button class="action-btn danger" onclick="cancelRow(${rowNum}, '${client}')" title="Annuler">✕</button>
+        <button class="action-btn" onclick="sendSignature(${rowNum})" style="color:var(--accent);border-color:rgba(200,245,102,0.3)" title="Renvoyer pour signature">✍️</button>
+        <button class="action-btn" onclick="sendPayment(${rowNum})" style="color:var(--blue);border-color:rgba(74,158,255,0.3)" title="Envoyer lien paiement">💳</button>
+        <button class="action-btn" onclick="markPaid(${rowNum})" style="color:var(--green);border-color:rgba(82,255,140,0.3)" title="Marquer comme payé">✓</button>
+        <button class="action-btn danger" onclick="cancelRow(${rowNum})" title="Annuler">✕</button>
       </td>
     </tr>`;
   }).join('');
@@ -1200,10 +1535,14 @@ function setFilter(f, btn) {
   renderTable();
 }
 
-/* ---------------- MODAL ---------------- */
+function findRow(rowNum) {
+  return allData.find(r => Number(r.row_number) === Number(rowNum));
+}
+
+/* ---------------- MODAL EDIT ---------------- */
 
 function openEdit(rowNum) {
-  const row = allData.find(r => r.row_number === rowNum);
+  const row = findRow(rowNum);
   if (!row) return;
 
   document.getElementById('modal-title').textContent = 'Modifier — ' + get(row, 'Nom Client');
@@ -1219,34 +1558,16 @@ function openEdit(rowNum) {
   document.getElementById('field-statut').style.display = 'block';
   document.getElementById('modal-save-btn').textContent = 'Enregistrer';
 
-  // Signature
   const signature = get(row, 'Signature');
   const sigField = document.getElementById('field-signature');
   const sigPreview = document.getElementById('signature-preview');
   sigField.style.display = 'block';
-  if (signature && signature.startsWith('data:image')) {
-    sigPreview.innerHTML = `<img src="${signature}" alt="Signature de ${get(row, 'Nom Client')}">`;
+  if (signature && String(signature).startsWith('data:image')) {
+    sigPreview.innerHTML = `<img src="${esc(signature)}" alt="Signature de ${esc(get(row, 'Nom Client'))}">`;
   } else {
     sigPreview.innerHTML = '<div class="signature-empty">Aucune signature enregistrée</div>';
   }
 
-  document.getElementById('modal').classList.add('open');
-}
-
-function openModal() {
-  document.getElementById('modal-title').textContent = 'Nouveau document';
-  document.getElementById('f-type').value = 'devis';
-  document.getElementById('f-client').value = '';
-  document.getElementById('f-email').value = '';
-  document.getElementById('f-prestation').value = '';
-  document.getElementById('f-montant').value = '';
-  document.getElementById('f-statut').value = 'En Attente';
-  document.getElementById('f-row').value = '';
-  document.getElementById('f-mode').value = 'create';
-  document.getElementById('field-type').style.display = 'block';
-  document.getElementById('field-statut').style.display = 'none';
-  document.getElementById('field-signature').style.display = 'none';
-  document.getElementById('modal-save-btn').textContent = 'Créer';
   document.getElementById('modal').classList.add('open');
 }
 
@@ -1257,41 +1578,7 @@ function closeModal(e) {
 }
 
 async function saveForm() {
-  const mode = document.getElementById('f-mode').value;
-  if (mode === 'create') {
-    await createDoc();
-  } else {
-    await saveEdit();
-  }
-}
-
-async function createDoc() {
-  const payload = {
-    'Type': document.getElementById('f-type').value,
-    'Nom Client': document.getElementById('f-client').value,
-    'Email Client': document.getElementById('f-email').value,
-    'Prestation': document.getElementById('f-prestation').value,
-    'Montant HT': parseFloat(document.getElementById('f-montant').value) || 0,
-    'client_id': currentClient.client_id,
-  };
-
-  if (!payload['Nom Client'] || !payload['Prestation'] || !payload['Montant HT']) {
-    showToast('Remplis tous les champs obligatoires', 'error');
-    return;
-  }
-
-  try {
-    await fetch(API_CREATE, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-    document.getElementById('modal').classList.remove('open');
-    showToast(payload['Type'] === 'facture' ? 'Facture créée ✓' : 'Devis créé ✓', 'success');
-    await loadData();
-  } catch(e) {
-    showToast('Erreur lors de la création', 'error');
-  }
+  await saveEdit();
 }
 
 async function saveEdit() {
@@ -1333,38 +1620,23 @@ async function saveEdit() {
 
 /* ---------------- ROW ACTIONS ---------------- */
 
-// Mise à jour locale immédiate sans rechargement visible
 function updateLocalRow(rowNum, changes) {
-  const idx = allData.findIndex(r => r.row_number === rowNum);
+  const idx = allData.findIndex(r => Number(r.row_number) === Number(rowNum));
   if (idx !== -1) {
     allData[idx] = { ...allData[idx], ...changes };
     renderTable();
     updateStats();
     renderChart(allData);
   }
-  // Rechargement silencieux en arrière-plan après 3s
-  setTimeout(() => {
-    if (!currentClient) return;
-    fetch(API_GET + '?client_id=' + encodeURIComponent(currentClient.client_id))
-      .then(r => r.json())
-      .then(data => {
-        const raw = Array.isArray(data) ? data : [data];
-        allData = raw.filter(row => {
-          const rowClientId = row['client_id'] || row['client_id '] || '';
-          return !rowClientId || rowClientId === currentClient.client_id;
-        });
-        renderTable();
-        updateStats();
-        renderChart(allData);
-      })
-      .catch(() => {}); // silencieux
-  }, 3000);
+  setTimeout(() => { if (currentClient) loadData(); }, 3000);
 }
 
-async function cancelRow(rowNum, client) {
-  if (!confirm(`Annuler le document de ${client} ?`)) return;
+async function cancelRow(rowNum) {
+  const row = findRow(rowNum);
+  if (!row) return;
+  if (!confirm(`Annuler le document de ${get(row, 'Nom Client')} ?`)) return;
   try {
-    fetch(API_CANCEL, {
+    await fetch(API_CANCEL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ row_number: rowNum, Statut: 'Annulé' })
@@ -1376,12 +1648,12 @@ async function cancelRow(rowNum, client) {
   }
 }
 
-async function markPaid(rowNum, client) {
-  if (!confirm(`Marquer le document de ${client} comme payé ?`)) return;
-  const row = allData.find(r => r.row_number === rowNum);
+async function markPaid(rowNum) {
+  const row = findRow(rowNum);
   if (!row) return;
+  if (!confirm(`Marquer le document de ${get(row, 'Nom Client')} comme payé ?`)) return;
   try {
-    fetch(API_UPDATE, {
+    await fetch(API_UPDATE, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -1400,19 +1672,23 @@ async function markPaid(rowNum, client) {
   }
 }
 
-async function sendPayment(rowNum, client, email, prestation, montant, numero) {
+async function sendPayment(rowNum) {
+  const row = findRow(rowNum);
+  if (!row) return;
+  const client = get(row, 'Nom Client');
+  const montant = parseFloat(get(row, 'Montant HT')) || 0;
   if (!confirm(`Envoyer un lien de paiement de ${montant}€ à ${client} ?`)) return;
   try {
-    fetch(API_PAYMENT, {
+    await fetch(API_PAYMENT, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         row_number: rowNum,
         'Nom Client': client,
-        'Email Client': email,
-        'Prestation': prestation,
+        'Email Client': get(row, 'Email Client'),
+        'Prestation': get(row, 'Prestation'),
         montant: montant,
-        'Numéro': numero,
+        'Numéro': get(row, 'Numéro'),
       })
     });
     showToast('Lien de paiement envoyé à ' + client + ' ✓', 'success');
@@ -1421,19 +1697,22 @@ async function sendPayment(rowNum, client, email, prestation, montant, numero) {
   }
 }
 
-async function sendSignature(rowNum, client, email, prestation, montant, numero) {
-  if (!confirm(`Envoyer le devis de ${client} pour signature ?`)) return;
+async function sendSignature(rowNum) {
+  const row = findRow(rowNum);
+  if (!row) return;
+  const client = get(row, 'Nom Client');
+  if (!confirm(`Renvoyer le devis de ${client} pour signature ?`)) return;
   try {
-    fetch(API_SIGNATURE, {
+    await fetch(API_SIGNATURE, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         row_number: rowNum,
         'Nom Client': client,
-        'Email Client': email,
-        'Prestation': prestation,
-        'Montant HT': montant,
-        'Numéro': numero,
+        'Email Client': get(row, 'Email Client'),
+        'Prestation': get(row, 'Prestation'),
+        'Montant HT': parseFloat(get(row, 'Montant HT')) || 0,
+        'Numéro': get(row, 'Numéro'),
       })
     });
     showToast('Email de signature envoyé à ' + client + ' ✓', 'success');
