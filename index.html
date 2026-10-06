@@ -128,6 +128,18 @@ nav {
   transition: all 0.2s;
 }
 
+.nav-right { display: flex; align-items: center; gap: 20px; }
+
+.nav-login {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-login:hover { color: var(--accent); }
+
 .nav-cta:hover { background: var(--accent2); transform: translateY(-1px); }
 
 /* SECTIONS */
@@ -1401,6 +1413,8 @@ footer {
 @media (max-width: 900px) {
   nav { padding: 16px 20px; }
   .nav-links { display: none; }
+  .nav-right { gap: 14px; }
+  .nav-cta { padding: 9px 14px; }
 
   .hero { padding: 100px 20px 60px; }
   .hero h1 { letter-spacing: -0.04em; }
@@ -1436,6 +1450,9 @@ footer {
 }
 
 @media (max-width: 420px) {
+  .nav-right { gap: 10px; }
+  .nav-login { font-size: 12px; }
+  .nav-cta { font-size: 12px; padding: 8px 10px; }
   .app-body { padding: 16px; }
   .app-fields { grid-template-columns: 1fr; }
 }
@@ -1457,7 +1474,10 @@ footer {
     <li><a href="#offres">Tarifs</a></li>
     <li><a href="#avis">Avis</a></li>
   </ul>
-  <a href="https://wa.me/33768272599" class="nav-cta">Réserver une démo</a>
+  <div class="nav-right">
+    <a href="app.html" class="nav-login">Espace client</a>
+    <a href="https://wa.me/33768272599" class="nav-cta">Réserver une démo</a>
+  </div>
 </nav>
 
 <!-- HERO -->
