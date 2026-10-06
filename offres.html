@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ynnovia — Automatisez votre activité</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Ynnovia ‚Äî Automatisez votre activit√©</title>
+<meta name="description" content="Cr√©ez vos devis en 30 secondes depuis l'application web Ynnovia, par saisie ou dict√©e vocale. PDF, email, relance, signature et paiement automatiques pour les artisans.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -27,14 +28,20 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
-  cursor: none;
 }
 
-/* CUSTOM CURSOR */
+/* CUSTOM CURSOR (souris uniquement) */
+.cursor, .cursor-ring { display: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+  .cursor, .cursor-ring { display: block; }
+}
+
 .cursor {
   position: fixed;
   width: 8px; height: 8px;
@@ -84,7 +91,7 @@ nav {
 }
 
 .nav-logo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.5px;
@@ -117,7 +124,7 @@ nav {
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   transition: all 0.2s;
 }
 
@@ -135,6 +142,7 @@ section { position: relative; z-index: 2; }
   text-align: center;
   padding: 120px 24px 80px;
   position: relative;
+  overflow: hidden;
 }
 
 .hero-badge {
@@ -149,7 +157,7 @@ section { position: relative; z-index: 2; }
   color: var(--accent);
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Inter', sans-serif;
   margin-bottom: 32px;
   opacity: 0;
   animation: fadeUp 0.8s 0.2s forwards;
@@ -169,11 +177,11 @@ section { position: relative; z-index: 2; }
 }
 
 .hero h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: clamp(48px, 8vw, 96px);
   font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -3px;
+  line-height: 1;
+  letter-spacing: -0.045em;
   margin-bottom: 24px;
   opacity: 0;
   animation: fadeUp 0.8s 0.4s forwards;
@@ -181,17 +189,19 @@ section { position: relative; z-index: 2; }
 
 .hero h1 .line1 { display: block; color: var(--text); }
 .hero h1 .line2 { display: block; color: var(--accent); }
-.hero h1 .line3 { display: block; color: var(--text2); font-weight: 400; font-size: 0.55em; letter-spacing: -1px; margin-top: 8px; }
+.hero h1 .line3 { display: block; color: var(--text2); font-weight: 500; font-size: 0.42em; letter-spacing: -0.02em; line-height: 1.3; margin-top: 20px; }
 
 .hero-sub {
   font-size: 17px;
   color: var(--text2);
   line-height: 1.6;
-  max-width: 520px;
+  max-width: 560px;
   margin: 0 auto 40px;
   opacity: 0;
   animation: fadeUp 0.8s 0.6s forwards;
 }
+
+.hero-sub strong { color: var(--text); font-weight: 500; }
 
 .hero-actions {
   display: flex;
@@ -210,7 +220,7 @@ section { position: relative; z-index: 2; }
   font-size: 15px;
   font-weight: 700;
   text-decoration: none;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
@@ -246,7 +256,7 @@ section { position: relative; z-index: 2; }
 }
 
 .hero-stat-num {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 32px;
   font-weight: 800;
   color: var(--accent);
@@ -255,7 +265,7 @@ section { position: relative; z-index: 2; }
 
 .hero-stat-label {
   font-size: 12px;
-  color: var(--text3);
+  color: var(--text2);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-top: 4px;
@@ -307,8 +317,9 @@ section { position: relative; z-index: 2; }
 
 /* SECTION HEADER */
 .section-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--accent);
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -316,12 +327,130 @@ section { position: relative; z-index: 2; }
 }
 
 .section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: clamp(32px, 5vw, 56px);
   font-weight: 800;
   line-height: 1.05;
-  letter-spacing: -2px;
+  letter-spacing: -0.035em;
 }
+
+/* VIDEO SECTION */
+.video-section {
+  padding: 120px 48px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.video-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 80px;
+  align-items: center;
+}
+
+.video-info p {
+  font-size: 16px;
+  color: var(--text2);
+  line-height: 1.7;
+  margin: 24px 0 32px;
+  max-width: 460px;
+}
+
+.video-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.video-points li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 15px;
+}
+
+.video-points li span {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--accent);
+  background: rgba(200,245,102,0.08);
+  border: 1px solid rgba(200,245,102,0.2);
+  border-radius: 6px;
+  padding: 3px 8px;
+  flex-shrink: 0;
+}
+
+.video-frame {
+  position: relative;
+  width: 320px;
+  aspect-ratio: 9 / 16;
+  border-radius: 36px;
+  padding: 10px;
+  background: #1a1a1a;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08), 0 0 120px rgba(124,92,255,0.18);
+}
+
+.video-frame video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 28px;
+  background: #000;
+}
+
+.video-sound {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(8,8,8,0.7);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.video-sound:hover { border-color: var(--accent); color: var(--accent); }
+
+.video-play {
+  position: absolute;
+  inset: 10px;
+  border-radius: 28px;
+  border: none;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.video-play span {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #080808;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 4px;
+  box-shadow: 0 12px 40px rgba(200,245,102,0.35);
+}
+
+.video-frame.playing .video-play { opacity: 0; pointer-events: none; }
 
 /* PROBLEM SECTION */
 .problem {
@@ -359,10 +488,18 @@ section { position: relative; z-index: 2; }
 .problem-item:hover { border-color: rgba(255,82,82,0.3); }
 
 .problem-icon {
-  font-size: 20px;
+  width: 36px; height: 36px;
   flex-shrink: 0;
-  margin-top: 2px;
+  border-radius: 9px;
+  background: rgba(200,245,102,0.08);
+  border: 1px solid rgba(200,245,102,0.18);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.problem-icon svg { width: 18px; height: 18px; }
 
 .problem-text strong {
   display: block;
@@ -396,7 +533,7 @@ section { position: relative; z-index: 2; }
 }
 
 .solution-card h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 28px;
   font-weight: 800;
   letter-spacing: -1px;
@@ -428,7 +565,7 @@ section { position: relative; z-index: 2; }
 }
 
 .solution-features li::before {
-  content: '✓';
+  content: '‚úì';
   color: var(--accent);
   font-weight: 700;
   font-size: 12px;
@@ -439,6 +576,17 @@ section { position: relative; z-index: 2; }
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.tag-new {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: #080808;
+  background: var(--accent);
+  border-radius: 4px;
+  padding: 2px 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 /* DEMO SECTION */
@@ -454,167 +602,250 @@ section { position: relative; z-index: 2; }
   margin: 0 auto;
 }
 
+.demo-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-top: 32px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.demo-tab {
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.demo-tab:hover { color: var(--text); }
+
+.demo-tab.active {
+  background: var(--accent);
+  color: #080808;
+  font-weight: 600;
+}
+
 .demo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
   align-items: center;
-  margin-top: 64px;
+  margin-top: 56px;
 }
 
-/* PHONE MOCKUP */
-.phone-wrap {
+.demo-visual {
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: 540px;
 }
 
-.phone {
-  width: 280px;
-  background: #1a1a1a;
-  border-radius: 40px;
-  padding: 16px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 0 1px rgba(255,255,255,0.04);
+
+/* WEB APP MOCKUP */
+.app-window {
+  width: 100%;
+  max-width: 460px;
+  background: #111;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
   position: relative;
 }
 
-.phone::before {
-  content: '';
-  position: absolute;
-  top: -1px; left: 50%;
-  transform: translateX(-50%);
-  width: 80px; height: 24px;
-  background: #1a1a1a;
-  border-radius: 0 0 16px 16px;
-  z-index: 2;
-}
-
-.phone-screen {
-  background: #0a0a0a;
-  border-radius: 28px;
-  overflow: hidden;
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-}
-
-.phone-header {
-  background: #1c1c1e;
-  padding: 12px 16px;
+.app-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #1a1a1a;
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.phone-avatar {
-  width: 32px; height: 32px;
-  background: linear-gradient(135deg, #2979ff, #00bcd4);
+.app-bar i {
+  width: 10px; height: 10px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
+  background: #333;
 }
 
-.phone-contact { flex: 1; }
-.phone-contact-name { font-size: 13px; font-weight: 600; color: #fff; }
-.phone-contact-status { font-size: 10px; color: #4caf50; }
+.app-bar i:nth-child(1) { background: #ff5f57; }
+.app-bar i:nth-child(2) { background: #febc2e; }
+.app-bar i:nth-child(3) { background: #28c840; }
 
-.phone-messages {
+.app-bar-title {
   flex: 1;
-  padding: 16px 12px;
-  overflow: hidden;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--text2);
+  margin-right: 46px;
+}
+
+.app-body { padding: 22px; }
+
+.app-head {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 18px;
 }
 
-.msg {
-  max-width: 85%;
-  padding: 8px 12px;
-  border-radius: 14px;
-  font-size: 12px;
-  line-height: 1.4;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.4s ease;
+.app-head h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-.msg.visible { opacity: 1; transform: translateY(0); }
-
-.msg-user {
-  background: #2979ff;
-  color: #fff;
-  align-self: flex-end;
-  border-bottom-right-radius: 4px;
-}
-
-.msg-bot {
-  background: #2c2c2e;
-  color: #f0ede8;
-  align-self: flex-start;
-  border-bottom-left-radius: 4px;
-}
-
-.msg-bot.accent {
-  background: rgba(200,245,102,0.15);
-  border: 1px solid rgba(200,245,102,0.3);
-  color: var(--accent);
-}
-
-.typing {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 10px 14px;
-  background: #2c2c2e;
-  border-radius: 14px;
-  border-bottom-left-radius: 4px;
-  align-self: flex-start;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.typing.visible { opacity: 1; }
-
-.typing-dot {
-  width: 5px; height: 5px;
-  background: var(--text2);
-  border-radius: 50%;
-  animation: typingDot 1.2s infinite;
-}
-
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes typingDot {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-  30% { transform: translateY(-4px); opacity: 1; }
-}
-
-.phone-input {
-  background: #1c1c1e;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.phone-input-field {
-  flex: 1;
-  background: #2c2c2e;
-  border-radius: 18px;
-  padding: 7px 14px;
+.app-head span {
+  font-family: 'Inter', sans-serif;
   font-size: 11px;
   color: var(--text2);
 }
 
+.app-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.app-field label {
+  display: block;
+  font-size: 10px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.app-input {
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-size: 13px;
+  min-height: 36px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: border-color 0.2s;
+}
+
+.app-input.focus { border-color: rgba(200,245,102,0.5); }
+.app-input.focus::after { content: '|'; color: var(--accent); animation: blink 0.8s infinite; margin-left: 1px; }
+
+@keyframes blink { 50% { opacity: 0; } }
+
+.app-lines {
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.app-lines-head, .app-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+.app-lines-head {
+  background: #161616;
+  font-size: 10px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.app-line {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all 0.35s ease;
+}
+
+.app-line.visible { opacity: 1; transform: translateX(0); }
+.app-line b { font-weight: 600; }
+
+.app-empty {
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text3);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.app-totals {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 16px;
+}
+
+.app-totals div { display: flex; justify-content: space-between; }
+
+.app-totals .ttc {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(200,245,102,0.08);
+  border: 1px solid rgba(200,245,102,0.2);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-send {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--accent);
+  color: #080808;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  transition: transform 0.15s, background 0.2s;
+  pointer-events: none;
+}
+
+.app-send.pressed { transform: scale(0.97); background: var(--accent2); }
+
+.app-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translate(-50%, 20px);
+  background: #1f2a12;
+  border: 1px solid rgba(200,245,102,0.4);
+  color: var(--accent);
+  font-size: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 0.4s ease;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+.app-toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
 .demo-info h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 36px;
   font-weight: 800;
-  letter-spacing: -1.5px;
+  letter-spacing: -0.03em;
   margin-bottom: 16px;
   line-height: 1.1;
 }
@@ -648,7 +879,7 @@ section { position: relative; z-index: 2; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Inter', sans-serif;
   font-size: 13px;
   color: var(--accent);
   flex-shrink: 0;
@@ -720,7 +951,7 @@ section { position: relative; z-index: 2; }
   color: #080808;
   font-size: 10px;
   font-weight: 700;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   padding: 4px 14px;
   border-radius: 20px;
   letter-spacing: 0.5px;
@@ -728,19 +959,19 @@ section { position: relative; z-index: 2; }
 }
 
 .pricing-tier {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Inter', sans-serif;
   font-size: 11px;
-  color: var(--text3);
+  color: var(--text2);
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
 
 .pricing-price {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 48px;
   font-weight: 800;
-  letter-spacing: -2px;
+  letter-spacing: -0.035em;
   color: var(--text);
   line-height: 1;
   margin-bottom: 4px;
@@ -804,7 +1035,7 @@ section { position: relative; z-index: 2; }
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   text-decoration: none;
   transition: all 0.2s;
   cursor: pointer;
@@ -894,7 +1125,7 @@ section { position: relative; z-index: 2; }
   justify-content: center;
   font-size: 16px;
   font-weight: 700;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   flex-shrink: 0;
 }
 
@@ -915,6 +1146,8 @@ section { position: relative; z-index: 2; }
   padding: 80px 48px;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 .counter-grid {
@@ -932,11 +1165,11 @@ section { position: relative; z-index: 2; }
 }
 
 .counter-num {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 48px;
   font-weight: 800;
   color: var(--accent);
-  letter-spacing: -2px;
+  letter-spacing: -0.035em;
   line-height: 1;
   margin-bottom: 8px;
 }
@@ -965,10 +1198,10 @@ section { position: relative; z-index: 2; }
 }
 
 .cta-section h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: clamp(36px, 6vw, 72px);
   font-weight: 800;
-  letter-spacing: -3px;
+  letter-spacing: -0.045em;
   line-height: 1;
   margin-bottom: 20px;
 }
@@ -999,7 +1232,7 @@ section { position: relative; z-index: 2; }
   font-size: 15px;
   font-weight: 700;
   text-decoration: none;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
@@ -1037,7 +1270,7 @@ footer {
 }
 
 .footer-logo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 800;
   color: var(--text2);
@@ -1047,7 +1280,121 @@ footer {
 
 .footer-text {
   font-size: 12px;
-  color: var(--text3);
+  color: var(--text2);
+}
+
+/* DICT√âE VOCALE */
+.app-dictate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  background: #161616;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.app-dictate .mic {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(200,245,102,0.1);
+  color: var(--accent);
+  transition: all 0.3s;
+}
+
+.app-dictate .mic svg { width: 16px; height: 16px; }
+
+.dictate-body { flex: 1; min-width: 0; }
+
+.dictate-text {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.45;
+  min-height: 17px;
+}
+
+.wave {
+  display: none;
+  align-items: center;
+  gap: 3px;
+  height: 16px;
+  margin-bottom: 4px;
+}
+
+.wave i {
+  width: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ff5f57;
+  animation: wave 0.9s ease-in-out infinite;
+}
+
+.wave i:nth-child(2n) { animation-delay: 0.15s; }
+.wave i:nth-child(3n) { animation-delay: 0.3s; }
+.wave i:nth-child(5n) { animation-delay: 0.45s; }
+
+@keyframes wave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+.app-dictate.recording { border-color: rgba(255,95,87,0.4); background: rgba(255,95,87,0.05); }
+.app-dictate.recording .mic { background: #ff5f57; color: #fff; animation: micPulse 1.4s infinite; }
+.app-dictate.recording .wave { display: flex; }
+.app-dictate.recording .dictate-text { color: var(--text); }
+.app-dictate.done .dictate-text { color: var(--accent); }
+
+@keyframes micPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,95,87,0.5); }
+  100% { box-shadow: 0 0 0 12px rgba(255,95,87,0); }
+}
+
+.app-input.filled { animation: fillFlash 0.6s ease; }
+
+@keyframes fillFlash {
+  0% { border-color: rgba(200,245,102,0.7); background: rgba(200,245,102,0.08); }
+  100% { border-color: rgba(255,255,255,0.08); background: #1a1a1a; }
+}
+
+/* OFFRE MOIS GRATUIT */
+.free-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: rgba(200,245,102,0.08);
+  border: 1px solid rgba(200,245,102,0.25);
+  font-size: 14px;
+  color: var(--text);
+}
+
+.free-banner strong { color: var(--accent); font-weight: 600; }
+
+.pricing-free {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(200,245,102,0.1);
+  border: 1px solid rgba(200,245,102,0.25);
+  border-radius: 6px;
+  padding: 4px 10px;
+  margin-bottom: 14px;
+  letter-spacing: 0.3px;
+}
+
+.pricing-then {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 12px;
 }
 
 /* MOBILE */
@@ -1056,14 +1403,23 @@ footer {
   .nav-links { display: none; }
 
   .hero { padding: 100px 20px 60px; }
-  .hero h1 { letter-spacing: -2px; }
+  .hero h1 { letter-spacing: -0.04em; }
   .hero-stats { gap: 24px; }
+
+  .video-section { padding: 80px 20px; }
+  .video-inner { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+  .video-info p { margin-left: auto; margin-right: auto; }
+  .video-points { align-items: flex-start; max-width: 360px; margin: 0 auto; text-align: left; }
+  .video-frame { width: min(300px, 82vw); margin: 0 auto; }
 
   .problem { padding: 80px 20px; }
   .problem-grid { grid-template-columns: 1fr; gap: 32px; }
 
   .demo { padding: 80px 20px; }
   .demo-grid { grid-template-columns: 1fr; gap: 48px; }
+  .demo-visual { min-height: 0; }
+  .free-banner { font-size: 13px; }
+  .demo-tab { padding: 10px 14px; }
 
   .pricing { padding: 80px 20px; }
   .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
@@ -1077,9 +1433,11 @@ footer {
   .cta-section { padding: 80px 20px; }
 
   footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 20px; }
+}
 
-  .body { cursor: auto; }
-  .cursor, .cursor-ring { display: none; }
+@media (max-width: 420px) {
+  .app-body { padding: 16px; }
+  .app-fields { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -1093,12 +1451,13 @@ footer {
 <nav>
   <div class="nav-logo">Ynn<span>ovia</span></div>
   <ul class="nav-links">
-    <li><a href="#probleme">Problème</a></li>
-    <li><a href="#demo">Démo</a></li>
-    <li><a href="#offres">Offres</a></li>
+    <li><a href="#video">Pr√©sentation</a></li>
+    <li><a href="#probleme">Fonctionnalit√©s</a></li>
+    <li><a href="#demo">D√©mo</a></li>
+    <li><a href="#offres">Tarifs</a></li>
     <li><a href="#avis">Avis</a></li>
   </ul>
-  <a href="https://wa.me/33768272599" class="nav-cta">Demander une démo →</a>
+  <a href="https://wa.me/33768272599" class="nav-cta">R√©server une d√©mo</a>
 </nav>
 
 <!-- HERO -->
@@ -1106,30 +1465,51 @@ footer {
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div>
-    <div class="hero-badge">🚀 Automatisation pour artisans</div>
+    <div class="hero-badge">Nouveau ¬∑ Dict√©e vocale des devis</div>
     <h1>
-      <span class="line1">Fini les devis</span>
-      <span class="line2">à la main.</span>
-      <span class="line3">Votre assistant IA travaille à votre place</span>
+      <span class="line1">Vos devis,</span>
+      <span class="line2">en 30 secondes.</span>
+      <span class="line3">Saisis ou dict√©s, directement depuis l'application web.</span>
     </h1>
-    <p class="hero-sub">En 30 secondes sur Telegram, générez un devis professionnel, envoyez-le au client, et suivez tout depuis votre téléphone.</p>
+    <p class="hero-sub">Ynnovia g√©n√®re vos devis professionnels, les envoie √† vos clients, <strong>assure les relances et le suivi des paiements</strong>. Depuis votre ordinateur ou votre smartphone.</p>
     <div class="hero-actions">
-      <a href="https://wa.me/33768272599" class="btn-primary">📱 Voir la démo gratuite</a>
-      <a href="#offres" class="btn-secondary">Voir les offres →</a>
+      <a href="#offres" class="btn-primary">Essayer gratuitement 1 mois</a>
+      <a href="#video" class="btn-secondary">‚ñ∂ Voir la vid√©o</a>
     </div>
     <div class="hero-stats">
       <div>
-        <div class="hero-stat-num" data-counter="30">0</div>
+        <div class="hero-stat-num" data-target="30">0</div>
         <div class="hero-stat-label">secondes par devis</div>
       </div>
       <div>
-        <div class="hero-stat-num" data-counter="100">0</div>
-        <div class="hero-stat-label">% automatisé</div>
+        <div class="hero-stat-num" data-target="100">0</div>
+        <div class="hero-stat-label">% en ligne</div>
       </div>
       <div>
-        <div class="hero-stat-num" data-counter="29">0</div>
-        <div class="hero-stat-label">€ / mois</div>
+        <div class="hero-stat-num" data-target="1">0</div>
+        <div class="hero-stat-label">mois offert</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="video-section" id="video">
+  <div class="video-inner">
+    <div class="video-info reveal">
+      <div class="section-label">Pr√©sentation</div>
+      <h2 class="section-title">Une gestion des devis<br><span style="color:var(--accent)">enti√®rement automatis√©e.</span></h2>
+      <p>De la cr√©ation du devis jusqu'√† l'encaissement, chaque √©tape est prise en charge. D√©couvrez Ynnovia en moins d'une minute.</p>
+      <ul class="video-points">
+        <li><span>01</span> Cr√©ation du devis, saisi ou dict√©</li>
+        <li><span>02</span> Envoi automatique par email au client</li>
+        <li><span>03</span> Suivi du paiement en temps r√©el</li>
+      </ul>
+    </div>
+    <div class="video-frame reveal" id="videoFrame">
+      <video id="promoVideo" src="Ynnovia%20site/assets/ynnovia-pub.mp4" poster="Ynnovia%20site/assets/ynnovia-poster.jpg" muted loop playsinline preload="metadata" aria-label="Vid√©o de pr√©sentation Ynnovia"></video>
+      <button class="video-play" id="videoPlay" aria-label="Lire la vid√©o"><span>‚ñ∂</span></button>
+      <button class="video-sound" id="videoSound">Activer le son</button>
     </div>
   </div>
 </section>
@@ -1137,50 +1517,51 @@ footer {
 <!-- PROBLEM / SOLUTION -->
 <section class="problem" id="probleme">
   <div class="reveal">
-    <div class="section-label">// Le problème</div>
-    <h2 class="section-title">Vous perdez des heures<br>sur des tâches répétitives</h2>
+    <div class="section-label">Le constat</div>
+    <h2 class="section-title">La gestion administrative vous<br>co√ªte des heures chaque semaine</h2>
   </div>
   <div class="problem-grid">
     <ul class="problem-list reveal">
       <li class="problem-item">
-        <span class="problem-icon">😤</span>
+        <span class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
         <div class="problem-text">
-          <strong>Devis faits à la main</strong>
-          <span>Word, papier, photos floues... Chaque devis vous prend 20-30 minutes.</span>
+          <strong>Des devis chronophages</strong>
+          <span>R√©diger un devis sur Word ou sur papier prend en moyenne 20 √† 30 minutes.</span>
         </div>
       </li>
       <li class="problem-item">
-        <span class="problem-icon">📞</span>
+        <span class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
         <div class="problem-text">
-          <strong>Relances oubliées</strong>
-          <span>Vous oubliez de relancer les clients qui n'ont pas répondu.</span>
+          <strong>Des relances oubli√©es</strong>
+          <span>Sans rappel automatique, les devis en attente restent sans r√©ponse.</span>
         </div>
       </li>
       <li class="problem-item">
-        <span class="problem-icon">💸</span>
+        <span class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17l-8.5-8.5-5 5L2 7"/><path d="M16 17h6v-6"/></svg></span>
         <div class="problem-text">
-          <strong>Devis perdus</strong>
-          <span>Des clients partent à la concurrence faute d'un devis rapide et professionnel.</span>
+          <strong>Des opportunit√©s perdues</strong>
+          <span>Un devis envoy√© tardivement, c'est un client qui se tourne vers la concurrence.</span>
         </div>
       </li>
       <li class="problem-item">
-        <span class="problem-icon">📊</span>
+        <span class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16v-3M12 16V9M17 16v-6"/></svg></span>
         <div class="problem-text">
-          <strong>Aucun suivi</strong>
-          <span>Impossible de savoir combien de devis sont en attente ou acceptés.</span>
+          <strong>Aucune visibilit√©</strong>
+          <span>Difficile de savoir quels devis sont en attente, accept√©s ou pay√©s.</span>
         </div>
       </li>
     </ul>
     <div class="solution-card reveal">
       <h3>La solution <span>Ynnovia</span></h3>
-      <p>Un système clé en main qui automatise tout — de la création du devis jusqu'au paiement.</p>
+      <p>Une plateforme cl√© en main qui automatise l'ensemble du cycle, de la cr√©ation du devis jusqu'√† l'encaissement.</p>
       <ul class="solution-features">
-        <li>Devis PDF en 30 secondes via Telegram</li>
-        <li>Email automatique au client</li>
-        <li>Relance automatique si pas de réponse</li>
-        <li>Signature électronique légale</li>
-        <li>Paiement en ligne intégré</li>
-        <li>Dashboard de suivi en temps réel</li>
+        <li>Cr√©ation de devis dans l'application web</li>
+        <li>Dict√©e vocale : votre devis se remplit seul <span class="tag-new">Nouveau</span></li>
+        <li>PDF professionnel envoy√© automatiquement par email</li>
+        <li>Relance automatique des clients</li>
+        <li>Signature √©lectronique √† valeur l√©gale</li>
+        <li>Paiement en ligne s√©curis√©</li>
+        <li>Tableau de bord en temps r√©el</li>
       </ul>
     </div>
   </div>
@@ -1190,59 +1571,83 @@ footer {
 <section class="demo" id="demo">
   <div class="demo-inner">
     <div class="reveal" style="text-align:center">
-      <div class="section-label">// Démo interactive</div>
+      <div class="section-label">D√©monstration</div>
       <h2 class="section-title">Voyez-le en action</h2>
+      <div class="demo-tabs" role="tablist">
+        <button class="demo-tab active" data-mode="dictee" role="tab" aria-selected="true">Dict√©e vocale</button>
+        <button class="demo-tab" data-mode="saisie" role="tab" aria-selected="false">Saisie</button>
+      </div>
     </div>
     <div class="demo-grid">
-      <div class="phone-wrap reveal">
-        <div class="phone">
-          <div class="phone-screen">
-            <div class="phone-header">
-              <div class="phone-avatar">🤖</div>
-              <div class="phone-contact">
-                <div class="phone-contact-name">Ynnovia Bot</div>
-                <div class="phone-contact-status">● en ligne</div>
+      <div class="demo-visual reveal" id="demoVisual">
+        <div class="app-window">
+          <div class="app-bar"><i></i><i></i><i></i><div class="app-bar-title">Ynnovia ¬∑ Nouveau devis</div></div>
+          <div class="app-body">
+            <div class="app-head">
+              <h4>Nouveau devis</h4>
+              <span>N¬∞ D-2026-118</span>
+            </div>
+            <div class="app-dictate" id="app-dictate">
+              <div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg></div>
+              <div class="dictate-body">
+                <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="dictate-text" id="dictate-text">Dicter le devis</div>
               </div>
             </div>
-            <div class="phone-messages" id="phone-messages">
-              <!-- Messages injectés par JS -->
+            <div class="app-fields">
+              <div class="app-field">
+                <label>Client</label>
+                <div class="app-input" id="f-client"></div>
+              </div>
+              <div class="app-field">
+                <label>Email</label>
+                <div class="app-input" id="f-email"></div>
+              </div>
             </div>
-            <div class="phone-input">
-              <div class="phone-input-field" id="phone-input-field">Message...</div>
+            <div class="app-lines" id="app-lines">
+              <div class="app-lines-head"><span>D√©signation</span><span>Montant HT</span></div>
+              <div class="app-empty" id="app-empty">+ Ajouter une ligne</div>
             </div>
+            <div class="app-totals">
+              <div><span>Total HT</span><span id="t-ht">0,00 ‚Ç¨</span></div>
+              <div><span>TVA 10 %</span><span id="t-tva">0,00 ‚Ç¨</span></div>
+              <div class="ttc"><span>Total TTC</span><span id="t-ttc">0,00 ‚Ç¨</span></div>
+            </div>
+            <button class="app-send" id="app-send" tabindex="-1">Envoyer le devis ‚Üí</button>
           </div>
+          <div class="app-toast" id="app-toast">‚úì Devis envoy√© √† M. Laurent ¬∑ PDF + email</div>
         </div>
       </div>
       <div class="demo-info reveal">
-        <h3>Votre assistant IA<br><span>disponible 24h/24</span></h3>
-        <p>Dictez ou tapez en langage naturel. Le bot comprend et génère un devis professionnel en quelques secondes, l'envoie au client, et vous confirme le tout.</p>
+        <h3>Saisissez ou dictez,<br><span>Ynnovia s'occupe du reste</span></h3>
+        <p>Remplissez votre devis au clavier, ou dictez-le simplement depuis votre t√©l√©phone sur le chantier. Ynnovia identifie le client, les prestations et les montants, puis calcule automatiquement la TVA et le total.</p>
         <div class="demo-steps">
           <div class="demo-step">
             <div class="step-num">01</div>
             <div class="step-text">
-              <strong>Vous envoyez un message</strong>
-              <span>Texte ou vocal — le bot comprend tout</span>
+              <strong>Cr√©ez votre devis</strong>
+              <span>Par saisie ou par dict√©e vocale, sur ordinateur ou smartphone</span>
             </div>
           </div>
           <div class="demo-step">
             <div class="step-num">02</div>
             <div class="step-text">
-              <strong>Le devis PDF est généré</strong>
-              <span>Professionnel, numéroté, avec votre logo</span>
+              <strong>Le PDF est g√©n√©r√©</strong>
+              <span>Num√©rot√©, √† vos couleurs, avec votre logo</span>
             </div>
           </div>
           <div class="demo-step">
             <div class="step-num">03</div>
             <div class="step-text">
-              <strong>L'email part au client</strong>
-              <span>Automatiquement, avec un bouton "Accepter"</span>
+              <strong>Le client le re√ßoit par email</strong>
+              <span>Avec un bouton pour accepter le devis en ligne</span>
             </div>
           </div>
           <div class="demo-step">
             <div class="step-num">04</div>
             <div class="step-text">
-              <strong>Vous recevez "C'est fait !"</strong>
-              <span>Confirmation immédiate sur Telegram</span>
+              <strong>Vous suivez chaque √©tape</strong>
+              <span>Statut, signature et paiement dans votre tableau de bord</span>
             </div>
           </div>
         </div>
@@ -1263,12 +1668,12 @@ footer {
       <div class="counter-label">% sans papier</div>
     </div>
     <div class="counter-item reveal">
-      <div class="counter-num" data-target="24">0</div>
-      <div class="counter-label">h/24 disponible</div>
+      <div class="counter-num" data-target="2">0</div>
+      <div class="counter-label">modes de saisie</div>
     </div>
     <div class="counter-item reveal">
-      <div class="counter-num" data-target="0">0</div>
-      <div class="counter-label">effort manuel</div>
+      <div class="counter-num" data-target="24">0</div>
+      <div class="counter-label">h/24 accessible</div>
     </div>
   </div>
 </div>
@@ -1276,69 +1681,76 @@ footer {
 <!-- PRICING -->
 <section class="pricing" id="offres">
   <div class="reveal">
-    <div class="section-label">// Nos offres</div>
+    <div class="section-label">Tarifs</div>
     <h2 class="section-title">Simple. Transparent.<br>Sans engagement.</h2>
+    <div class="free-banner"><strong>1 mois gratuit</strong> sur toutes les offres, sans engagement.</div>
   </div>
   <div class="pricing-grid">
     <!-- CLASSIC -->
     <div class="pricing-card reveal">
       <div class="pricing-tier">Classic</div>
-      <div class="pricing-price">29<span>€/mois</span></div>
-      <div class="pricing-desc">Idéal pour démarrer et automatiser l'essentiel.</div>
+      <div class="pricing-free">1er mois offert</div>
+      <div class="pricing-price">29<span> ‚Ç¨/mois</span></div>
+      <div class="pricing-then">√† partir du 2e mois</div>
+      <div class="pricing-desc">L'essentiel pour cr√©er et envoyer vos devis.</div>
       <div class="pricing-divider"></div>
       <ul class="pricing-features">
-        <li><span class="check">✓</span> Bot Telegram devis & factures</li>
-        <li><span class="check">✓</span> PDF professionnel automatique</li>
-        <li><span class="check">✓</span> Email automatique au client</li>
-        <li><span class="check">✓</span> Relance automatique à 9h</li>
-        <li><span class="check">✓</span> Bouton "Accepter le devis"</li>
-        <li><span class="check">✓</span> Commandes /devis /facture</li>
-        <li class="disabled"><span class="cross">✗</span> Dashboard web</li>
-        <li class="disabled"><span class="cross">✗</span> Signature électronique</li>
-        <li class="disabled"><span class="cross">✗</span> Paiement en ligne</li>
+        <li><span class="check">‚úì</span> Cr√©ation de devis dans l'application web</li>
+        <li><span class="check">‚úì</span> Dict√©e vocale des devis</li>
+        <li><span class="check">‚úì</span> Devis et factures PDF professionnels</li>
+        <li><span class="check">‚úì</span> Envoi automatique par email</li>
+        <li><span class="check">‚úì</span> Relance automatique des clients</li>
+        <li><span class="check">‚úì</span> Bouton ¬´ Accepter le devis ¬ª</li>
+        <li class="disabled"><span class="cross">‚úó</span> Tableau de bord et statistiques</li>
+        <li class="disabled"><span class="cross">‚úó</span> Signature √©lectronique</li>
+        <li class="disabled"><span class="cross">‚úó</span> Paiement en ligne</li>
       </ul>
-      <a href="https://wa.me/33768272599" class="btn-pricing btn-pricing-ghost">Commencer →</a>
+      <a href="https://wa.me/33768272599" class="btn-pricing btn-pricing-ghost">Essayer gratuitement</a>
     </div>
 
     <!-- PREMIUM -->
     <div class="pricing-card featured reveal">
-      <div class="pricing-badge">⭐ Le plus populaire</div>
+      <div class="pricing-badge">Le plus choisi</div>
       <div class="pricing-tier">Premium</div>
-      <div class="pricing-price">79<span>€/mois</span></div>
-      <div class="pricing-desc">Telegram + tableau de bord professionnel.</div>
+      <div class="pricing-free">1er mois offert</div>
+      <div class="pricing-price">79<span> ‚Ç¨/mois</span></div>
+      <div class="pricing-then">√† partir du 2e mois</div>
+      <div class="pricing-desc">Pilotez votre activit√© avec un tableau de bord complet.</div>
       <div class="pricing-divider"></div>
       <ul class="pricing-features">
-        <li><span class="check">✓</span> Tout le Classic inclus</li>
-        <li><span class="check">✓</span> Dashboard web sur PC & iPhone</li>
-        <li><span class="check">✓</span> Statistiques en temps réel</li>
-        <li><span class="check">✓</span> Graphique CA par mois</li>
-        <li><span class="check">✓</span> Filtres & recherche client</li>
-        <li><span class="check">✓</span> Modifier / Annuler un devis</li>
-        <li><span class="check">✓</span> App iPhone en 1 clic</li>
-        <li class="disabled"><span class="cross">✗</span> Signature électronique</li>
-        <li class="disabled"><span class="cross">✗</span> Paiement en ligne</li>
+        <li><span class="check">‚úì</span> Tout le Classic inclus</li>
+        <li><span class="check">‚úì</span> Tableau de bord sur ordinateur et iPhone</li>
+        <li><span class="check">‚úì</span> Statistiques en temps r√©el</li>
+        <li><span class="check">‚úì</span> Chiffre d'affaires mensuel</li>
+        <li><span class="check">‚úì</span> Filtres et recherche client</li>
+        <li><span class="check">‚úì</span> Modification et annulation des devis</li>
+        <li><span class="check">‚úì</span> Application iPhone en un clic</li>
+        <li class="disabled"><span class="cross">‚úó</span> Signature √©lectronique</li>
+        <li class="disabled"><span class="cross">‚úó</span> Paiement en ligne</li>
       </ul>
-      <a href="https://wa.me/33768272599" class="btn-pricing btn-pricing-solid">Commencer →</a>
+      <a href="https://wa.me/33768272599" class="btn-pricing btn-pricing-solid">Essayer gratuitement</a>
     </div>
 
     <!-- BUSINESS -->
     <div class="pricing-card reveal">
       <div class="pricing-tier">Business</div>
-      <div class="pricing-price">149<span>€/mois</span></div>
-      <div class="pricing-desc">Le système complet pour les pros qui veulent tout automatiser.</div>
+      <div class="pricing-free">1er mois offert</div>
+      <div class="pricing-price">149<span> ‚Ç¨/mois</span></div>
+      <div class="pricing-then">√† partir du 2e mois</div>
+      <div class="pricing-desc">La solution compl√®te, de la cr√©ation du devis √† l'encaissement.</div>
       <div class="pricing-divider"></div>
       <ul class="pricing-features">
-        <li><span class="check">✓</span> Tout le Premium inclus</li>
-        <li><span class="check">✓</span> Signature électronique légale</li>
-        <li><span class="check">✓</span> Paiement en ligne Stripe</li>
-        <li><span class="check">✓</span> Notification paiement reçu</li>
-        <li><span class="check">✓</span> Statut "Payé" automatique</li>
-        <li><span class="check">✓</span> Page signature personnalisée</li>
-        <li><span class="check">✓</span> Support prioritaire</li>
-        <li><span class="check">✓</span> Personnalisation complète</li>
-        <li><span class="check">✓</span> Mise à jour incluses</span></li>
+        <li><span class="check">‚úì</span> Tout le Premium inclus</li>
+        <li><span class="check">‚úì</span> Signature √©lectronique √† valeur l√©gale</li>
+        <li><span class="check">‚úì</span> Paiement en ligne via Stripe</li>
+        <li><span class="check">‚úì</span> Notification de paiement re√ßu</li>
+        <li><span class="check">‚úì</span> Statut ¬´ Pay√© ¬ª automatique</li>
+        <li><span class="check">‚úì</span> Page de signature personnalis√©e</li>
+        <li><span class="check">‚úì</span> Support prioritaire</li>
+        <li><span class="check">‚úì</span> Personnalisation compl√®te</li>
+        <li><span class="check">‚úì</span> Mises √† jour incluses</li>
       </ul>
-      <a href="https://wa.me/33768272599" class="btn-pricing btn-pricing-ghost">Commencer →</a>
+      <a href="https://wa.me/33768272599" class="btn-pricing btn-pricing-ghost">Essayer gratuitement</a>
     </div>
   </div>
 </section>
@@ -1347,40 +1759,40 @@ footer {
 <section class="testimonials" id="avis">
   <div class="testimonials-inner">
     <div class="reveal">
-      <div class="section-label">// Ils nous font confiance</div>
-      <h2 class="section-title">Ce qu'ils en disent</h2>
+      <div class="section-label">T√©moignages</div>
+      <h2 class="section-title">Ce qu'en disent nos clients</h2>
     </div>
     <div class="testimonials-grid">
       <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-text">Avant je passais 1h par jour à faire mes devis. Maintenant c'est 30 secondes sur Telegram. Mes clients reçoivent un PDF professionnel et je reçois une confirmation. C'est magique.</div>
+        <div class="testimonial-stars">‚òÖ‚òÖ‚òÖ‚òÖ‚òÖ</div>
+        <div class="testimonial-text">Avant je passais 1h par jour √† faire mes devis. Maintenant c'est 30 secondes dans l'application. Mes clients re√ßoivent un PDF professionnel et je re√ßois une confirmation. C'est magique.</div>
         <div class="testimonial-author">
           <div class="author-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2)">M</div>
           <div>
             <div class="author-name">Marc Delaunay</div>
-            <div class="author-job">Plombier — Paris 15e</div>
+            <div class="author-job">Plombier ‚Äî Paris 15e</div>
           </div>
         </div>
       </div>
       <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-text">Le dashboard sur mon iPhone c'est ce qui m'a convaincu. Je vois en temps réel mes devis en attente, je relance d'un clic. Mon chiffre d'affaires a augmenté de 20% en 2 mois.</div>
+        <div class="testimonial-stars">‚òÖ‚òÖ‚òÖ‚òÖ‚òÖ</div>
+        <div class="testimonial-text">Le dashboard sur mon iPhone c'est ce qui m'a convaincu. Je vois en temps r√©el mes devis en attente, je relance d'un clic. Mon chiffre d'affaires a augment√© de 20% en 2 mois.</div>
         <div class="testimonial-author">
           <div class="author-avatar" style="background:linear-gradient(135deg,#f093fb,#f5576c)">S</div>
           <div>
             <div class="author-name">Sophie Bernard</div>
-            <div class="author-job">Électricienne — Lyon</div>
+            <div class="author-job">√âlectricienne ‚Äî Lyon</div>
           </div>
         </div>
       </div>
       <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-text">La signature électronique est un game changer. Les clients signent depuis leur téléphone en 2 clics. Plus de devis perdus, plus d'impression. Je recommande à tous les artisans.</div>
+        <div class="testimonial-stars">‚òÖ‚òÖ‚òÖ‚òÖ‚òÖ</div>
+        <div class="testimonial-text">La signature √©lectronique est un game changer. Les clients signent depuis leur t√©l√©phone en 2 clics. Plus de devis perdus, plus d'impression. Je recommande √† tous les artisans.</div>
         <div class="testimonial-author">
           <div class="author-avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">K</div>
           <div>
             <div class="author-name">Karim Mansouri</div>
-            <div class="author-job">Peintre — Marseille</div>
+            <div class="author-job">Peintre ‚Äî Marseille</div>
           </div>
         </div>
       </div>
@@ -1391,15 +1803,11 @@ footer {
 <!-- CTA -->
 <section class="cta-section">
   <div class="reveal">
-    <h2>Prêt à gagner<br><span>du temps ?</span></h2>
-    <p>Démo gratuite en 15 minutes. Pas d'engagement. Installation en 24h.</p>
+    <h2>Gagnez du temps<br><span>d√®s aujourd'hui.</span></h2>
+    <p>D√©monstration gratuite de 15 minutes. Premier mois offert, sans engagement. Mise en place sous 24 h.</p>
     <div class="cta-actions">
-      <a href="https://wa.me/33768272599" class="btn-whatsapp">
-        💬 WhatsApp — Démo gratuite
-      </a>
-      <a href="mailto:Sak.e.agency@gmail.com" class="btn-email">
-        ✉️ Envoyer un email
-      </a>
+      <a href="https://wa.me/33768272599" class="btn-whatsapp">R√©server une d√©mo sur WhatsApp</a>
+      <a href="mailto:Ynnoviaa@gmail.com" class="btn-email">Ynnoviaa@gmail.com</a>
     </div>
   </div>
 </section>
@@ -1407,8 +1815,8 @@ footer {
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">Ynn<span>ovia</span></div>
-  <div class="footer-text">© 2026 Ynnovia — Tous droits réservés</div>
-  <div class="footer-text">Sak.e.agency@gmail.com</div>
+  <div class="footer-text">¬© 2026 Ynnovia ‚Äî Tous droits r√©serv√©s</div>
+  <a href="mailto:Ynnoviaa@gmail.com" class="footer-text" style="text-decoration:none">Ynnoviaa@gmail.com</a>
 </footer>
 
 <script>
@@ -1425,7 +1833,7 @@ document.addEventListener('mousemove', e => {
 
 function animateRing() {
   rx += (mx - rx) * 0.12;
-  ry += (my - ry) *.12;
+  ry += (my - ry) * 0.12;
   ring.style.left = rx - 16 + 'px';
   ring.style.top = ry - 16 + 'px';
   requestAnimationFrame(animateRing);
@@ -1508,7 +1916,7 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 reveals.forEach(el => observer.observe(el));
 
-// COUNTERS
+// COUNTERS (hero + section chiffres)
 const counters = document.querySelectorAll('[data-target]');
 const counterObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
@@ -1530,84 +1938,197 @@ const counterObserver = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 counters.forEach(el => counterObserver.observe(el));
 
-// TELEGRAM DEMO ANIMATION
-const messages = [
-  { type: 'user', text: '/devis' },
-  { type: 'bot', text: '👋 Bonjour ! Quel est le nom du client ?' },
-  { type: 'user', text: 'Marie Dupont' },
-  { type: 'bot', text: '📧 Email du client ?' },
-  { type: 'user', text: 'marie.dupont@gmail.com' },
-  { type: 'bot', text: '🔧 Prestation et montant ?' },
-  { type: 'user', text: 'Débouchage toilette 350€' },
-  { type: 'bot', text: '✅ Devis DEV-2026-001 envoyé à Marie Dupont !\n📄 PDF généré · 📧 Email envoyé', accent: true },
-];
+// VIDEO : lecture auto (muette) quand visible, pause sinon
+const video = document.getElementById('promoVideo');
+const videoFrame = document.getElementById('videoFrame');
+const videoPlay = document.getElementById('videoPlay');
+const videoSound = document.getElementById('videoSound');
+let userPaused = false;
 
-const container = document.getElementById('phone-messages');
-let msgIndex = 0;
-let isRunning = false;
+video.addEventListener('play', () => videoFrame.classList.add('playing'));
+video.addEventListener('pause', () => videoFrame.classList.remove('playing'));
 
-function showNextMessage() {
-  if (msgIndex >= messages.length) {
-    setTimeout(() => {
-      container.innerHTML = '';
-      msgIndex = 0;
-      setTimeout(showNextMessage, 1000);
-    }, 4000);
-    return;
+videoPlay.addEventListener('click', () => { userPaused = false; video.play(); });
+video.addEventListener('click', () => {
+  if (video.paused) { userPaused = false; video.play(); }
+  else { userPaused = true; video.pause(); }
+});
+
+videoSound.addEventListener('click', () => {
+  video.muted = !video.muted;
+  videoSound.textContent = video.muted ? 'Activer le son' : 'Couper le son';
+  if (!video.muted) {
+    video.currentTime = 0;
+    userPaused = false;
+    video.play();
   }
+});
 
-  const msg = messages[msgIndex];
-
-  // Show typing indicator for bot messages
-  if (msg.type === 'bot') {
-    const typing = document.createElement('div');
-    typing.className = 'typing';
-    typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-    container.appendChild(typing);
-    container.scrollTop = container.scrollHeight;
-    setTimeout(() => typing.classList.add('visible'), 50);
-
-    setTimeout(() => {
-      typing.remove();
-      addMessage(msg);
-    }, 1200);
-  } else {
-    // Update input field to show user typing
-    const inputField = document.getElementById('phone-input-field');
-    inputField.textContent = msg.text;
-    setTimeout(() => {
-      inputField.textContent = 'Message...';
-      addMessage(msg);
-    }, 600);
-  }
-
-  msgIndex++;
-}
-
-function addMessage(msg) {
-  const el = document.createElement('div');
-  el.className = `msg ${msg.type === 'user' ? 'msg-user' : 'msg-bot'}${msg.accent ? ' accent' : ''}`;
-  el.style.whiteSpace = 'pre-line';
-  el.textContent = msg.text;
-  container.appendChild(el);
-  container.scrollTop = container.scrollHeight;
-  setTimeout(() => el.classList.add('visible'), 50);
-
-  const delay = msg.type === 'user' ? 1000 : 1500;
-  setTimeout(showNextMessage, delay);
-}
-
-// Start demo when phone is visible
-const phoneObserver = new IntersectionObserver(entries => {
+new IntersectionObserver(entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting && !isRunning) {
-      isRunning = true;
-      setTimeout(showNextMessage, 800);
+    if (entry.isIntersecting) {
+      if (!userPaused) video.play().catch(() => {});
+    } else {
+      video.pause();
     }
   });
-}, { threshold: 0.3 });
+}, { threshold: 0.5 }).observe(videoFrame);
 
-phoneObserver.observe(document.getElementById('phone-messages'));
+// DEMO (dict√©e vocale + saisie)
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let demoRun = 0;
+let demoMode = 'dictee';
+let demoVisible = false;
+const alive = id => id === demoRun;
+
+function startDemo() { runDemo(++demoRun); }
+function stopDemo() { demoRun++; }
+
+document.querySelectorAll('.demo-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    if (tab.dataset.mode === demoMode) return;
+    demoMode = tab.dataset.mode;
+    document.querySelectorAll('.demo-tab').forEach(t => {
+      t.classList.toggle('active', t === tab);
+      t.setAttribute('aria-selected', t === tab);
+    });
+    if (demoVisible) startDemo();
+  });
+});
+
+const fmt = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ‚Ç¨';
+const demoData = {
+  client: 'M. Laurent',
+  email: 'laurent@email.fr',
+  lines: [
+    { label: 'D√©pose & √©vacuation', amount: 480 },
+    { label: 'Pose carrelage salle de bain', amount: 582.08 },
+  ],
+  speech: '¬´ Devis pour monsieur Laurent, laurent@email.fr. D√©pose et √©vacuation, 480 euros. Pose carrelage salle de bain, 582 euros 08. ¬ª',
+};
+
+const $ = id => document.getElementById(id);
+
+async function typeInto(el, text, id) {
+  el.classList.add('focus');
+  el.textContent = '';
+  for (const ch of text) {
+    if (!alive(id)) return;
+    el.textContent += ch;
+    await sleep(45);
+  }
+  el.classList.remove('focus');
+}
+
+function fillInstant(el, text) {
+  el.textContent = text;
+  el.classList.remove('filled');
+  void el.offsetWidth;
+  el.classList.add('filled');
+}
+
+function setTotals(ht) {
+  $('t-ht').textContent = fmt(ht);
+  $('t-tva').textContent = fmt(ht * 0.1);
+  $('t-ttc').textContent = fmt(ht * 1.1);
+}
+
+async function animateTotals(from, to, id) {
+  const steps = 20;
+  for (let i = 1; i <= steps; i++) {
+    if (!alive(id)) return;
+    setTotals(from + (to - from) * (i / steps));
+    await sleep(25);
+  }
+}
+
+function resetDemo() {
+  $('f-client').textContent = '';
+  $('f-email').textContent = '';
+  $('app-lines').querySelectorAll('.app-line').forEach(l => l.remove());
+  $('app-empty').style.display = '';
+  $('app-toast').classList.remove('visible');
+  $('app-dictate').className = 'app-dictate';
+  $('dictate-text').textContent = 'Dicter le devis';
+  setTotals(0);
+}
+
+async function dictate(id) {
+  const box = $('app-dictate');
+  const text = $('dictate-text');
+  box.classList.add('recording');
+  text.textContent = '';
+  for (const word of demoData.speech.split(' ')) {
+    if (!alive(id)) return;
+    text.textContent += (text.textContent ? ' ' : '') + word;
+    await sleep(170);
+  }
+  await sleep(500);
+  if (!alive(id)) return;
+  box.classList.remove('recording');
+  box.classList.add('done');
+  text.textContent = '‚úì Dict√©e analys√©e, devis rempli automatiquement';
+  await sleep(400);
+}
+
+async function runDemo(id) {
+  while (alive(id)) {
+    resetDemo();
+    await sleep(800);
+    const dictee = demoMode === 'dictee';
+
+    if (dictee) {
+      await dictate(id);
+      if (!alive(id)) return;
+      fillInstant($('f-client'), demoData.client);
+      await sleep(150);
+      fillInstant($('f-email'), demoData.email);
+      await sleep(200);
+    } else {
+      await typeInto($('f-client'), demoData.client, id);
+      await sleep(300);
+      await typeInto($('f-email'), demoData.email, id);
+      await sleep(400);
+    }
+
+    let ht = 0;
+    for (const line of demoData.lines) {
+      if (!alive(id)) return;
+      $('app-empty').style.display = 'none';
+      const el = document.createElement('div');
+      el.className = 'app-line';
+      el.innerHTML = `<span></span><b>${fmt(line.amount)}</b>`;
+      el.querySelector('span').textContent = line.label;
+      $('app-lines').appendChild(el);
+      await sleep(50);
+      el.classList.add('visible');
+      await animateTotals(ht, ht + line.amount, id);
+      ht += line.amount;
+      await sleep(dictee ? 300 : 600);
+    }
+
+    if (!alive(id)) return;
+    $('app-send').classList.add('pressed');
+    await sleep(200);
+    $('app-send').classList.remove('pressed');
+    await sleep(300);
+    $('app-toast').classList.add('visible');
+    await sleep(3500);
+  }
+}
+
+// Lance la d√©mo quand elle est visible
+new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !demoVisible) {
+      demoVisible = true;
+      startDemo();
+    } else if (!entry.isIntersecting && demoVisible) {
+      demoVisible = false;
+      stopDemo();
+    }
+  });
+}, { threshold: 0.3 }).observe(document.getElementById('demoVisual'));
 </script>
 </body>
 </html>
