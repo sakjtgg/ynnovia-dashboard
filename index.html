@@ -651,6 +651,8 @@ section.hero { border-top: 0; }
 .bk-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
 .bk-slot { padding: 10px 6px; border: 1px solid var(--line-2); border-radius: 8px; background: transparent; font-weight: 500; font-size: .92rem; font-variant-numeric: tabular-nums; cursor: pointer; transition: border-color .15s, color .15s; }
 .bk-slot:hover { border-color: var(--accent); color: var(--accent); }
+.bk-slot:disabled { text-decoration: line-through; color: var(--ink-3); border-color: var(--line); opacity: .55; cursor: default; }
+.bk-slot:disabled:hover { color: var(--ink-3); border-color: var(--line); }
 .bk-slot[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
 .bk-tz { font-size: .82rem; color: var(--ink-3); margin-top: 10px; }
 
@@ -1327,9 +1329,12 @@ section.hero { border-top: 0; }
     // Durée entre deux créneaux, en minutes
     pasMinutes: 30,
     // Délai minimum avant un créneau, en heures
-    delaiMinHeures: 0,
+    delaiMinHeures: 10,
     // Jusqu'à combien de jours à l'avance on peut réserver
     joursMax: 28,
+    // Part des créneaux affichés comme indisponibles (en %), pour ne pas montrer un agenda vide.
+    // Toujours les mêmes pour un jour donné. Mettre 0 pour tout afficher libre.
+    indisponiblesPourcent: 0,
     // Jours fermés (vacances, jours fériés), format 'AAAA-MM-JJ'
     fermetures: [],
   };
@@ -1628,7 +1633,15 @@ section.hero { border-top: 0; }
   const pris = new Set();
   const cle = (d, m) => isoDate(d) + '|' + hhmm(m);
 
-  function creneaux(d) {
+  // Petit hachage stable : le même créneau est toujours indisponible ou toujours libre
+  function hash(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return (h >>> 0) % 100;
+  }
+
+  // Tous les créneaux à venir du jour, libres ou non
+  function creneauxDuJour(d) {
     if (d < today0 || d > lastDay) return [];
     if (!CONFIG.joursOuverts.includes(d.getDay())) return [];
     if (CONFIG.fermetures.includes(isoDate(d))) return [];
@@ -1637,11 +1650,16 @@ section.hero { border-top: 0; }
     for (const [debut, fin] of plages) {
       for (let m = toMin(debut); m + CONFIG.pasMinutes <= toMin(fin); m += CONFIG.pasMinutes) {
         const t = new Date(d.getFullYear(), d.getMonth(), d.getDate(), Math.floor(m / 60), m % 60);
-        if (t >= minTime && !pris.has(cle(d, m))) out.push(m);
+        if (t < minTime) continue;
+        const libre = !pris.has(cle(d, m)) && hash('yn' + cle(d, m)) >= CONFIG.indisponiblesPourcent;
+        out.push({ m, libre });
       }
     }
     return out;
   }
+
+  // Seulement les créneaux qu'on peut réserver
+  const creneaux = d => creneauxDuJour(d).filter(c => c.libre).map(c => c.m);
 
   const firstOfMonth = d => new Date(d.getFullYear(), d.getMonth(), 1);
   let viewMonth = firstOfMonth(today0);
@@ -1699,13 +1717,18 @@ section.hero { border-top: 0; }
     const list = $('bk-slots');
     list.innerHTML = '';
     $('bk-slots-title').innerHTML = '<span>2.</span>Choisissez une heure, ' + jourLong(d);
-    creneaux(d).forEach(m => {
+    creneauxDuJour(d).forEach(({ m, libre }) => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'bk-slot';
       b.textContent = heureFr(m);
-      b.setAttribute('aria-pressed', 'false');
-      b.addEventListener('click', () => chooseSlot(m, b));
+      if (libre) {
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', () => chooseSlot(m, b));
+      } else {
+        b.disabled = true;
+        b.setAttribute('aria-label', heureFr(m) + ', indisponible');
+      }
       list.appendChild(b);
     });
     wrap.hidden = false;
