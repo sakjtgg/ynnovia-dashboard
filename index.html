@@ -1319,19 +1319,19 @@ section.hero { border-top: 0; }
     whatsapp: '33768272599',
 
     // Jours où tu prends des appels : 0 = dimanche, 1 = lundi … 6 = samedi
-    joursOuverts: [1, 2, 3, 4, 5, 6],
-    // Plages horaires du lundi au vendredi
-    plages: [['09:00', '12:00'], ['14:00', '19:00']],
+    joursOuverts: [0, 1, 2, 3, 4, 5, 6],
+    // Plages horaires du lundi au vendredi (et le dimanche)
+    plages: [['09:00', '23:00']],
     // Plages horaires du samedi
-    plagesSamedi: [['10:00', '13:00']],
+    plagesSamedi: [['09:00', '23:00']],
     // Durée entre deux créneaux, en minutes
     pasMinutes: 30,
     // Délai minimum avant un créneau, en heures
-    delaiMinHeures: 12,
+    delaiMinHeures: 0,
     // Jusqu'à combien de jours à l'avance on peut réserver
     joursMax: 28,
     // Jours fermés (vacances, jours fériés), format 'AAAA-MM-JJ'
-    fermetures: ['2026-11-01', '2026-11-11', '2026-12-25', '2027-01-01'],
+    fermetures: [],
   };
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
