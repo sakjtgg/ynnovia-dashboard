@@ -1308,12 +1308,12 @@ section.hero { border-top: 0; }
      RÉGLAGES : tout ce que tu peux modifier est ici
      ============================================================ */
   const CONFIG = {
-    // Comment les demandes d'appel te sont envoyées :
-    //   'n8n'     : envoi vers ton webhook n8n (renseigner webhookUrl)
-    //   'netlify' : Netlify Forms (si le site est hébergé sur Netlify)
-    //   'email'   : ouvre la messagerie du visiteur avec la demande pré-remplie
-    envoi: 'email',
-    webhookUrl: '',
+    // Les demandes d'appel partent vers le workflow n8n « YNNOVIA RDV site » :
+    // il enregistre le RDV, t'envoie un email et l'ajoute à ton agenda iPhone.
+    envoi: 'n8n',
+    webhookUrl: 'https://n8n.srv1464223.hstgr.cloud/webhook/ynnovia-rdv',
+    // Liste des créneaux déjà réservés, pour ne plus les proposer
+    creneauxPrisUrl: 'https://n8n.srv1464223.hstgr.cloud/webhook/ynnovia-creneaux',
 
     email: 'Theo@ynnovia.fr',
     whatsapp: '33768272599',
@@ -1625,6 +1625,9 @@ section.hero { border-top: 0; }
   const lastDay = new Date(today0);
   lastDay.setDate(lastDay.getDate() + CONFIG.joursMax);
 
+  const pris = new Set();
+  const cle = (d, m) => isoDate(d) + '|' + hhmm(m);
+
   function creneaux(d) {
     if (d < today0 || d > lastDay) return [];
     if (!CONFIG.joursOuverts.includes(d.getDay())) return [];
@@ -1634,7 +1637,7 @@ section.hero { border-top: 0; }
     for (const [debut, fin] of plages) {
       for (let m = toMin(debut); m + CONFIG.pasMinutes <= toMin(fin); m += CONFIG.pasMinutes) {
         const t = new Date(d.getFullYear(), d.getMonth(), d.getDate(), Math.floor(m / 60), m % 60);
-        if (t >= minTime) out.push(m);
+        if (t >= minTime && !pris.has(cle(d, m))) out.push(m);
       }
     }
     return out;
@@ -1810,7 +1813,20 @@ section.hero { border-top: 0; }
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(p),
     });
+    if (r.status === 409) { const e = new Error('pris'); e.code = 'pris'; throw e; }
     if (!r.ok) throw new Error('Webhook ' + r.status);
+  }
+
+  async function chargerCreneauxPris() {
+    if (!CONFIG.creneauxPrisUrl) return;
+    try {
+      const r = await fetch(CONFIG.creneauxPrisUrl, { cache: 'no-store' });
+      if (!r.ok) return;
+      const data = await r.json();
+      (data.pris || []).forEach(c => pris.add(c.date + '|' + c.heure));
+      renderCal();
+      if (selDate && $('bk-form').hidden) chooseDay(selDate);
+    } catch (e) { /* si la liste ne charge pas, le serveur refusera quand même un doublon */ }
   }
 
   async function sendNetlify(p) {
@@ -1880,6 +1896,14 @@ section.hero { border-top: 0; }
         showDone('email', p);
       }
     } catch (error) {
+      if (error.code === 'pris') {
+        pris.add(isoDate(selDate) + '|' + hhmm(selMin));
+        const jour = selDate;
+        chooseDay(jour);
+        $('bk-error').textContent = '';
+        $('bk-slots-title').innerHTML = '<span>2.</span>Ce créneau vient d\'être réservé, choisissez une autre heure';
+        return;
+      }
       const box = $('bk-error');
       box.textContent = 'La demande n\'a pas pu être envoyée. ';
       const a = document.createElement('a');
@@ -1908,6 +1932,7 @@ section.hero { border-top: 0; }
   });
 
   renderCal();
+  chargerCreneauxPris();
 })();
 </script>
 </body>
